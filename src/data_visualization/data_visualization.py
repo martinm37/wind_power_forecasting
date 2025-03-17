@@ -24,20 +24,49 @@ def wind_series_plotter(time_vec,power_vec,frequency):
 
     return fig
 
+def wind_series_plotter_rescaled(time_vec,power_vec,frequency):
+
+    fig, ax = plt.subplots()
+
+    fig.suptitle(f"Wind power time series, rescaled, {frequency} frequency")
+
+    ax.plot(time_vec,power_vec)
+    ax.set_ylabel("power [% of total capacity]")
+    ax.set_xlabel("time")
+
+    return fig
+
+
+def wind_series_plotter_with_capacity(time_vec,power_vec,cap_vec,frequency):
+
+    fig, ax = plt.subplots()
+
+    fig.suptitle(f"Wind power time series, {frequency} frequency")
+
+    ax.plot(time_vec,power_vec, label="wind power")
+    ax.plot(time_vec, cap_vec, label="total capacity")
+    ax.set_ylabel("power [MW]")
+    ax.set_xlabel("time")
+    ax.legend()
+
+    return fig
+
 
 
 if __name__ == "__main__":
 
     #file_name = "ods031_2.csv"
-    file_name = "ods031_4_years_2.csv"
+    file_name = "ods031_all_years_2.csv"
     data = get_data_file(file_name = file_name)
-    data_selection = data[["Datetime","Measured & Upscaled"]]
+    data_selection = data[["Datetime","Measured & Upscaled","Monitored capacity"]]
 
     # converting time columns
     data_selection["Datetime"] = pd.to_datetime(data_selection["Datetime"],utc=True)
 
     # removing the time offset
     data_selection['Datetime'] = data_selection['Datetime'].dt.tz_convert(None)
+
+    data_selection["Rescaled Power"] = data["Measured & Upscaled"] / data["Monitored capacity"] * 100
 
 
     # transforming to hourly frequency
@@ -59,6 +88,14 @@ if __name__ == "__main__":
     data_selection_monthly = data_selection.resample(rule="30d", on="Datetime").mean().reset_index()
     data_selection_monthly[:] = data_selection_monthly.iloc[::-1]
 
+    # transforming to quarterly frequency
+    data_selection_quarterly = data_selection.resample(rule="120d", on="Datetime").mean().reset_index()
+    data_selection_quarterly[:] = data_selection_quarterly.iloc[::-1]
+
+    # transforming to half yearly frequency
+    data_selection_half_yearly = data_selection.resample(rule="180d", on="Datetime").mean().reset_index()
+    data_selection_half_yearly[:] = data_selection_half_yearly.iloc[::-1]
+
 
     # day = 2
     # month = 1
@@ -77,25 +114,56 @@ if __name__ == "__main__":
 
     # plotting
 
-    data_select = data_selection[(data_selection["Datetime"] >= date_from) & (data_selection["Datetime"] < date_to)]
-    fig = wind_series_plotter(data_select["Datetime"],data_select["Measured & Upscaled"], frequency = "15min")
-    plt.show()
-
-    data_select = data_selection_hourly[(data_selection_hourly["Datetime"] >= date_from) & (data_selection_hourly["Datetime"] < date_to)]
-    fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="hourly")
-    plt.show()
-
-    data_select = data_selection_daily[(data_selection_daily["Datetime"] >= date_from) & (data_selection_daily["Datetime"] < date_to)]
-    fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="daily")
-    plt.show()
-
-    data_select = data_selection_weekly[(data_selection_weekly["Datetime"] >= date_from) & (data_selection_weekly["Datetime"] < date_to)]
-    fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="weekly")
-    plt.show()
+    # data_select = data_selection[(data_selection["Datetime"] >= date_from) & (data_selection["Datetime"] < date_to)]
+    # fig = wind_series_plotter(data_select["Datetime"],data_select["Measured & Upscaled"], frequency = "15min")
+    # plt.show()
+    #
+    # data_select = data_selection_hourly[(data_selection_hourly["Datetime"] >= date_from) & (data_selection_hourly["Datetime"] < date_to)]
+    # fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="hourly")
+    # plt.show()
+    #
+    # data_select = data_selection_daily[(data_selection_daily["Datetime"] >= date_from) & (data_selection_daily["Datetime"] < date_to)]
+    # fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="daily")
+    # plt.show()
+    #
+    # data_select = data_selection_weekly[(data_selection_weekly["Datetime"] >= date_from) & (data_selection_weekly["Datetime"] < date_to)]
+    # fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="weekly")
+    # plt.show()
 
     data_select = data_selection_monthly[(data_selection_monthly["Datetime"] >= date_from) & (data_selection_monthly["Datetime"] < date_to)]
     fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="monthly")
     plt.show()
+
+    data_select = data_selection_monthly[
+        (data_selection_monthly["Datetime"] >= date_from) & (data_selection_monthly["Datetime"] < date_to)]
+    fig = wind_series_plotter_with_capacity(data_select["Datetime"], data_select["Measured & Upscaled"],
+                                            data_select["Monitored capacity"], frequency="monthly")
+    plt.show()
+
+
+    data_select = data_selection_weekly[(data_selection_weekly["Datetime"] >= date_from) & (data_selection_weekly["Datetime"] < date_to)]
+    fig = wind_series_plotter_rescaled(data_select["Datetime"], data_select["Rescaled Power"], frequency="weekly")
+    plt.show()
+
+
+    data_select = data_selection_monthly[(data_selection_monthly["Datetime"] >= date_from) & (data_selection_monthly["Datetime"] < date_to)]
+    fig = wind_series_plotter_rescaled(data_select["Datetime"], data_select["Rescaled Power"], frequency="monthly")
+    plt.show()
+
+
+    # data_select = data_selection_quarterly[(data_selection_quarterly["Datetime"] >= date_from) & (data_selection_quarterly["Datetime"] < date_to)]
+    # fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="quarterly")
+    # plt.show()
+    #
+    # data_select = data_selection_half_yearly[(data_selection_half_yearly["Datetime"] >= date_from) & (data_selection_half_yearly["Datetime"] < date_to)]
+    # fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="half yearly")
+    # plt.show()
+
+
+
+    # rescaling
+
+
 
 
 
