@@ -26,15 +26,47 @@ def wind_series_plotter_rescaled(time_vec,power_vec,frequency):
 
     return fig
 
+def acf_comp(y_vec, total_lag_k):
+    """
+    computes the autocorrelation function
+    y_vec: T x 1 vector of a time series data - *** first value has to be the newest one !!!! ***
+    total_lag_k: for how many lags we want to compute acf
+
+    returns acf_vec: total_lag_k x 1 vector of autocorrelations
+    """
+
+    time_length = len(y_vec)
+
+    y_mean = np.sum(y_vec) / time_length
+
+    y_vec_demeaned = y_vec - y_mean
+
+    y_variance = y_vec_demeaned.T @ y_vec_demeaned  # WITHOUT dividing - as it cancels out later on
+
+    acf_vec = np.zeros(total_lag_k).reshape(-1, 1)
+
+    for i in range(len(acf_vec)):
+        first_vec = y_vec_demeaned[0:time_length - i - 1]  # from 1 to T - i
+        second_vec = y_vec_demeaned[i + 1:]  # from i to T
+
+        acf_vec[i] = first_vec.T @ second_vec / y_variance
+
+    return acf_vec
+
+
 def acf_plot(acf_vec,time_length):
 
     lag_vec = np.arange(1, len(acf_vec) + 1)
     zeros_vec = np.zeros(len(acf_vec))
-    sig_val = 1.96 / np.sqrt(time_length)
-    print(sig_val)
 
-    top_sig_vec = np.ones(len(acf_vec)) * 1.96 / 10
-    bottom_sig_vec = np.ones(len(acf_vec)) * -1.96 / 10
+    sig_val = 1.96 * 1 / np.sqrt(time_length)
+
+    #print(sig_val)
+    # top_sig_vec = np.ones(len(acf_vec)) * 1.96 / 10
+    # bottom_sig_vec = np.ones(len(acf_vec)) * -1.96 / 10
+
+    top_sig_vec = np.ones(len(acf_vec)) * sig_val
+    bottom_sig_vec = np.ones(len(acf_vec)) * -sig_val
 
     fig, ax = plt.subplots()
 
@@ -50,6 +82,88 @@ def acf_plot(acf_vec,time_length):
     ax.set_xlabel("lag k")
 
     return fig
+
+
+def pacf_plot(pacf_vec,time_length):
+
+    lag_vec = np.arange(1, len(pacf_vec) + 1)
+    zeros_vec = np.zeros(len(pacf_vec))
+
+    sig_val = 1.96 * 1 / np.sqrt(time_length)
+
+    #print(sig_val)
+    # top_sig_vec = np.ones(len(acf_vec)) * 1.96 / 10
+    # bottom_sig_vec = np.ones(len(acf_vec)) * -1.96 / 10
+
+    top_sig_vec = np.ones(len(pacf_vec)) * sig_val
+    bottom_sig_vec = np.ones(len(pacf_vec)) * -sig_val
+
+    fig, ax = plt.subplots()
+
+    fig.suptitle(f"Partial autocorrelation function, N = {time_length}")
+
+    ax.plot(lag_vec, pacf_vec)
+    ax.plot(lag_vec, zeros_vec, "k--")
+    ax.plot(lag_vec, top_sig_vec, "r--")
+    ax.plot(lag_vec, bottom_sig_vec, "r--")
+    ax.set_yticks(np.arange(-0.5, 1.1, step=0.1))
+
+    ax.set_ylabel("partial autocorrelation at lag k")
+    ax.set_xlabel("lag k")
+
+    return fig
+
+
+def pacf_ar_p_fit(y_vec,lag_p):
+
+    """
+    computes the AR(p) model for the purposes of computation of
+    partial autoccorelation function
+    ---> does not include an intercept in the model equation
+
+    original vector y_vec has dimensions of T x 1
+    new vectors will have dimensions (T - lag_p) x 1
+    """
+    time_length = len(y_vec)
+
+    Y_mat = y_vec[0:time_length - lag_p]
+
+    X_mat = np.zeros((time_length - lag_p,lag_p))
+
+    for i in range(0,lag_p):
+        i_indx = i + 1 # easier for indexing
+        #print(f"{i_indx},{time_length - lag_p + i_indx}")
+        selection = y_vec[i_indx : time_length - lag_p + i_indx , 0]
+        X_mat[:,i] = selection
+
+    # OLS estimation
+    beta_vec = np.linalg.inv(X_mat.T @ X_mat) @ X_mat.T @ Y_mat
+
+    return beta_vec
+
+
+def pacf_comp(y_vec,total_lag_p):
+
+    """
+    computes the partial autocorrelation function
+    """
+
+    time_length = len(y_vec)
+
+    y_mean = np.sum(y_vec) / time_length
+
+    y_vec_demeaned = y_vec - y_mean
+
+    pacf_vec = np.zeros(total_lag_p).reshape(-1, 1)
+
+    for i in range(len(pacf_vec)):
+        print(f"computing lag {i+1} of {len(pacf_vec)}")
+
+        beta_vec_i = pacf_ar_p_fit(y_vec = y_vec_demeaned,lag_p = i+1) # lag starts from 1
+
+        pacf_vec[i] = beta_vec_i[-1]
+
+    return pacf_vec
 
 
 if __name__ == "__main__":
@@ -90,36 +204,51 @@ if __name__ == "__main__":
 
     relative_power_vec = (data_matrix_truncated[:,0] / data_matrix_truncated[:,1] * 100).reshape(-1,1)
 
-    #  *** top value is the newest ***
+
+
+    #autocorrelation_function_vec = acf_comp(y_vec = relative_power_vec, total_lag_k = 4*24*30*12)
+    autocorrelation_function_vec = acf_comp(y_vec=relative_power_vec, total_lag_k = 4*24*1)
 
     time_length = len(relative_power_vec)
 
-    mean_value = np.sum(relative_power_vec) / time_length
-
-    relative_power_demeaned_vec = relative_power_vec - mean_value
-
-    #relative_power_variance = (1/(time_length-1)) * relative_power_demeaned_vec.T @ relative_power_demeaned_vec
-    relative_power_variance = relative_power_demeaned_vec.T @ relative_power_demeaned_vec # WITHOUT dividing
-
-
-    measurement_span = 4*24*30
-
-    autocorrelation_function_vec = np.zeros(measurement_span).reshape(-1,1)
-
-    for i in range(len(autocorrelation_function_vec)):
-        first_vec = relative_power_demeaned_vec[0:time_length-i-1] # from 1 to T - i
-        second_vec = relative_power_demeaned_vec[i+1:]             # from i to T
-
-        autocorrelation_function_vec[i] = first_vec.T @ second_vec / relative_power_variance
-
-
     fig = acf_plot(autocorrelation_function_vec,time_length)
-
     plt.show()
 
 
+    #pacf_vec_test = pacf_ar_p_fit(y_vec = relative_power_vec,lag_p = 4)
+    pacf_vec_test = pacf_comp(y_vec = relative_power_vec, total_lag_p = 4*24*1)
+
+
+    fig = pacf_plot(pacf_vec = pacf_vec_test,time_length = len(relative_power_vec))
+    plt.show()
+
 
     print("eyyoo xdddd")
+
+
+
+
+ # #  *** top value is the newest ***
+ #
+ #    time_length = len(relative_power_vec)
+ #
+ #    mean_value = np.sum(relative_power_vec) / time_length
+ #
+ #    relative_power_demeaned_vec = relative_power_vec - mean_value
+ #
+ #    #relative_power_variance = (1/(time_length-1)) * relative_power_demeaned_vec.T @ relative_power_demeaned_vec
+ #    relative_power_variance = relative_power_demeaned_vec.T @ relative_power_demeaned_vec # WITHOUT dividing
+ #
+ #
+ #    measurement_span = 4*24*30*12*4
+ #
+ #    autocorrelation_function_vec = np.zeros(measurement_span).reshape(-1,1)
+ #
+ #    for i in range(len(autocorrelation_function_vec)):
+ #        first_vec = relative_power_demeaned_vec[0:time_length-i-1] # from 1 to T - i
+ #        second_vec = relative_power_demeaned_vec[i+1:]             # from i to T
+ #
+ #        autocorrelation_function_vec[i] = first_vec.T @ second_vec / relative_power_variance
 
 
 
