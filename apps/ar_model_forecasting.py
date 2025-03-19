@@ -1,6 +1,6 @@
 
 """
-usage of the AR(p) model
+forecasting with the AR(p) model
 """
 
 import numpy as np
@@ -56,10 +56,16 @@ print(f"min power truncated: {np.min(data_matrix_truncated[:, 0])}")
 
 relative_power_vec = (data_matrix_truncated[:,0] / data_matrix_truncated[:,1] * 100).reshape(-1,1)
 
+# separation of the original vector into the training set and forecasting set
+
+relative_power_vec_fit = relative_power_vec[96:]
+
+realised_future = relative_power_vec[:96]
+
 # model fitting
 #-------------------
 
-ar_p_model_solution = ar_p_model_comp(y_vec = relative_power_vec,lag_p = 12)
+ar_p_model_solution = ar_p_model_comp(y_vec = relative_power_vec_fit,lag_p = 96)
 
 def original_fitted_comparison_plot(original_vec, fitted_vec):
 
@@ -104,7 +110,7 @@ def error_plot(error_vec):
 # plt.show()
 
 
-error_acf = acf_comp(y_vec = ar_p_model_solution.errors_vector, total_lag_k = 4*24*30*1)
+error_acf = acf_comp(y_vec = ar_p_model_solution.errors_vector, total_lag_k = 4*24*5*1)
 
 fig  = acf_plot(acf_vec = error_acf, time_length = len(ar_p_model_solution.errors_vector))
 plt.show()
@@ -113,19 +119,30 @@ plt.show()
 
 # forecasting
 
-#ar_p_model_forecast_comp(starting_y_vec, beta_vec, horizon)
+started_vec = relative_power_vec_fit[:len(ar_p_model_solution.beta_vector)-1]
+
+forecasted_future = ar_p_model_forecast_comp(starting_y_vec = started_vec,
+                                             beta_vec = ar_p_model_solution.beta_vector,
+                                             horizon = 96)
 
 
+def forecast_evaluation_plot(forecast_vec,realised_vec):
 
+    fig, ax = plt.subplots()
+
+    fig.suptitle(f"Forecasted vs realized values")
+
+    axis_vec = np.arange(0, len(forecast_vec))
+    zeros_vec = np.zeros(len(forecast_vec))
+
+    ax.plot(axis_vec, forecast_vec, label = "forecast")
+    ax.plot(axis_vec, realised_vec, label = "realization")
+    ax.plot(axis_vec, zeros_vec, "k--")
+    ax.legend()
+
+    return fig
+
+fig = forecast_evaluation_plot(forecast_vec = forecasted_future, realised_vec = np.flip(realised_future))
+plt.show()
 
 print("eyyoo")
-
-
-
-
-
-
-
-
-
-
