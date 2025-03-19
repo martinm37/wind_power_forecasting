@@ -206,17 +206,17 @@ if __name__ == "__main__":
 
 
 
-    #autocorrelation_function_vec = acf_comp(y_vec = relative_power_vec, total_lag_k = 4*24*30*12)
-    autocorrelation_function_vec = acf_comp(y_vec=relative_power_vec, total_lag_k = 4*24*1)
-
-    time_length = len(relative_power_vec)
-
-    fig = acf_plot(autocorrelation_function_vec,time_length)
-    plt.show()
+    # #autocorrelation_function_vec = acf_comp(y_vec = relative_power_vec, total_lag_k = 4*24*30*12)
+    # autocorrelation_function_vec = acf_comp(y_vec=relative_power_vec, total_lag_k = 4*24*1)
+    #
+    # time_length = len(relative_power_vec)
+    #
+    # fig = acf_plot(autocorrelation_function_vec,time_length)
+    # plt.show()
 
 
     #pacf_vec_test = pacf_ar_p_fit(y_vec = relative_power_vec,lag_p = 4)
-    pacf_vec_test = pacf_comp(y_vec = relative_power_vec, total_lag_p = 4*24*1)
+    pacf_vec_test = pacf_comp(y_vec = relative_power_vec, total_lag_p = 4*24*3*1)
 
 
     fig = pacf_plot(pacf_vec = pacf_vec_test,time_length = len(relative_power_vec))
