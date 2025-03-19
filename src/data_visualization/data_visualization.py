@@ -53,6 +53,14 @@ def wind_series_plotter_with_capacity(time_vec,power_vec,cap_vec,frequency):
 
 
 
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
 
     #file_name = "ods031_2.csv"

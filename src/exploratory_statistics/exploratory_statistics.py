@@ -84,36 +84,6 @@ def acf_plot(acf_vec,time_length):
     return fig
 
 
-def pacf_plot(pacf_vec,time_length):
-
-    lag_vec = np.arange(1, len(pacf_vec) + 1)
-    zeros_vec = np.zeros(len(pacf_vec))
-
-    sig_val = 1.96 * 1 / np.sqrt(time_length)
-
-    #print(sig_val)
-    # top_sig_vec = np.ones(len(acf_vec)) * 1.96 / 10
-    # bottom_sig_vec = np.ones(len(acf_vec)) * -1.96 / 10
-
-    top_sig_vec = np.ones(len(pacf_vec)) * sig_val
-    bottom_sig_vec = np.ones(len(pacf_vec)) * -sig_val
-
-    fig, ax = plt.subplots()
-
-    fig.suptitle(f"Partial autocorrelation function, N = {time_length}")
-
-    ax.plot(lag_vec, pacf_vec)
-    ax.plot(lag_vec, zeros_vec, "k--")
-    ax.plot(lag_vec, top_sig_vec, "r--")
-    ax.plot(lag_vec, bottom_sig_vec, "r--")
-    ax.set_yticks(np.arange(-0.5, 1.1, step=0.1))
-
-    ax.set_ylabel("partial autocorrelation at lag k")
-    ax.set_xlabel("lag k")
-
-    return fig
-
-
 def pacf_ar_p_fit(y_vec,lag_p):
 
     """
@@ -164,6 +134,40 @@ def pacf_comp(y_vec,total_lag_p):
         pacf_vec[i] = beta_vec_i[-1]
 
     return pacf_vec
+
+
+def pacf_plot(pacf_vec,time_length):
+
+    lag_vec = np.arange(1, len(pacf_vec) + 1)
+    zeros_vec = np.zeros(len(pacf_vec))
+
+    sig_val = 1.96 * 1 / np.sqrt(time_length)
+
+    #print(sig_val)
+    # top_sig_vec = np.ones(len(acf_vec)) * 1.96 / 10
+    # bottom_sig_vec = np.ones(len(acf_vec)) * -1.96 / 10
+
+    top_sig_vec = np.ones(len(pacf_vec)) * sig_val
+    bottom_sig_vec = np.ones(len(pacf_vec)) * -sig_val
+
+    fig, ax = plt.subplots()
+
+    fig.suptitle(f"Partial autocorrelation function, N = {time_length}")
+
+    ax.plot(lag_vec, pacf_vec)
+    ax.plot(lag_vec, zeros_vec, "k--")
+    ax.plot(lag_vec, top_sig_vec, "r--")
+    ax.plot(lag_vec, bottom_sig_vec, "r--")
+    ax.set_yticks(np.arange(-0.5, 1.1, step=0.1))
+
+    ax.set_ylabel("partial autocorrelation at lag k")
+    ax.set_xlabel("lag k")
+
+    return fig
+
+
+
+
 
 
 if __name__ == "__main__":
