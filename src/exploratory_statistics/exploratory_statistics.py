@@ -166,6 +166,55 @@ def pacf_plot(pacf_vec,time_length):
     return fig
 
 
+def adf_comp(y_vec,lag_p):
+
+    """
+    computes the augmented dickey fuller test
+    """
+
+    # creating a vector of differences
+    y_vec_t = y_vec[:-1]
+    y_vec_t_1 = y_vec[1:]
+    y_vec_diff = y_vec_t - y_vec_t_1
+
+    time_length = len(y_vec_diff)
+
+    # creating OLS matrices
+    Y_mat = y_vec_diff[0:time_length - lag_p]
+
+    X_mat = np.zeros((time_length - lag_p,lag_p))
+    for i in range(0,lag_p):
+        i_indx = i + 1 # easier for indexing
+        #print(f"{i_indx},{time_length - lag_p + i_indx}")
+        selection = y_vec_diff[i_indx : time_length - lag_p + i_indx , 0]
+        X_mat[:,i] = selection
+
+    # creating vector for intercep and vector or normal (non differenced) values
+    ones_vec = np.ones(time_length - lag_p).reshape(-1, 1)
+    y_vec_lag = y_vec_t_1[0:time_length - lag_p]
+
+    # creating the filan X matrix
+    X_mat = np.concatenate((ones_vec,y_vec_lag, X_mat), axis=1)
+
+    # OLS regression
+    beta_vec = np.linalg.inv(X_mat.T @ X_mat) @ X_mat.T @ Y_mat
+
+    # computing standard errors
+    Y_mat_fitted = X_mat @ beta_vec
+    errors_vec = Y_mat - Y_mat_fitted
+    sigma_squared = (1/time_length) * errors_vec.T @ errors_vec
+    covariance_matrix = sigma_squared * np.linalg.inv(X_mat.T @ X_mat)
+
+    # computing t statistic
+    gamma_param = beta_vec[1]
+    gamma_var = covariance_matrix[1,1]
+    gamma_SE = np.sqrt(gamma_var)
+
+    test_statistic = gamma_param / gamma_SE
+
+    return test_statistic
+
+
 
 
 
@@ -208,6 +257,7 @@ if __name__ == "__main__":
 
     relative_power_vec = (data_matrix_truncated[:,0] / data_matrix_truncated[:,1] * 100).reshape(-1,1)
 
+    gamma_p = adf_comp(y_vec = relative_power_vec, lag_p = 10)
 
 
     #autocorrelation_function_vec = acf_comp(y_vec = relative_power_vec, total_lag_k = 4*24*30*12)
@@ -220,11 +270,11 @@ if __name__ == "__main__":
 
 
     #pacf_vec_test = pacf_ar_p_fit(y_vec = relative_power_vec,lag_p = 4)
-    pacf_vec_test = pacf_comp(y_vec = relative_power_vec, total_lag_p = 4*24*1*1)
-
-
-    fig = pacf_plot(pacf_vec = pacf_vec_test,time_length = len(relative_power_vec))
-    plt.show()
+    # pacf_vec_test = pacf_comp(y_vec = relative_power_vec, total_lag_p = 4*24*1*1)
+    #
+    #
+    # fig = pacf_plot(pacf_vec = pacf_vec_test,time_length = len(relative_power_vec))
+    # plt.show()
 
 
 

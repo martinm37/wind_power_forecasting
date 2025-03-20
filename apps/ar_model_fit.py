@@ -59,7 +59,7 @@ relative_power_vec = (data_matrix_truncated[:,0] / data_matrix_truncated[:,1] * 
 # model fitting
 #-------------------
 
-ar_p_model_solution = ar_p_model_comp(y_vec = relative_power_vec,lag_p = 12)
+ar_p_model_solution = ar_p_model_comp(y_vec = relative_power_vec,lag_p = 15)
 
 def original_fitted_comparison_plot(original_vec, fitted_vec):
 

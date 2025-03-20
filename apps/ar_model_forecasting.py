@@ -65,7 +65,7 @@ realised_future = relative_power_vec[:96]
 # model fitting
 #-------------------
 
-ar_p_model_solution = ar_p_model_comp(y_vec = relative_power_vec_fit,lag_p = 96)
+ar_p_model_solution = ar_p_model_comp(y_vec = relative_power_vec_fit,lag_p = 15)
 
 def original_fitted_comparison_plot(original_vec, fitted_vec):
 
