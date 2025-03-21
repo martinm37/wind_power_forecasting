@@ -1,25 +1,11 @@
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import os.path
 import datetime
 
 
-from src.utils.paths import get_data_path, get_data_file
+from src.utils.paths import get_data_file
 
-
-def wind_series_plotter_rescaled(time_vec,power_vec,frequency):
-
-    fig, ax = plt.subplots()
-
-    fig.suptitle(f"Wind power time series, rescaled, {frequency} frequency")
-
-    ax.plot(time_vec,power_vec)
-    ax.set_ylabel("power [% of total capacity]")
-    ax.set_xlabel("time")
-
-    return fig
 
 def acf_comp(y_vec, total_lag_k):
     """
@@ -47,36 +33,6 @@ def acf_comp(y_vec, total_lag_k):
         acf_vec[i] = first_vec.T @ second_vec / y_variance
 
     return acf_vec
-
-
-def acf_plot(acf_vec,time_length):
-
-    lag_vec = np.arange(1, len(acf_vec) + 1)
-    zeros_vec = np.zeros(len(acf_vec))
-
-    sig_val = 1.96 * 1 / np.sqrt(time_length)
-
-    #print(sig_val)
-    # top_sig_vec = np.ones(len(acf_vec)) * 1.96 / 10
-    # bottom_sig_vec = np.ones(len(acf_vec)) * -1.96 / 10
-
-    top_sig_vec = np.ones(len(acf_vec)) * sig_val
-    bottom_sig_vec = np.ones(len(acf_vec)) * -sig_val
-
-    fig, ax = plt.subplots()
-
-    fig.suptitle(f"Autocorrelation function, N = {time_length}")
-
-    ax.plot(lag_vec, acf_vec)
-    ax.plot(lag_vec, zeros_vec, "k--")
-    ax.plot(lag_vec, top_sig_vec, "r--")
-    ax.plot(lag_vec, bottom_sig_vec, "r--")
-    ax.set_yticks(np.arange(-0.5, 1.1, step=0.1))
-
-    ax.set_ylabel("autocorrelation at lag k")
-    ax.set_xlabel("lag k")
-
-    return fig
 
 
 def pacf_ar_p_fit(y_vec,lag_p):
@@ -115,50 +71,43 @@ def pacf_comp(y_vec,total_lag_p):
 
     time_length = len(y_vec)
 
-    y_mean = np.sum(y_vec) / time_length
-
-    y_vec_demeaned = y_vec - y_mean
+    #y_mean = np.sum(y_vec) / time_length
+    #y_vec_demeaned = y_vec - y_mean
 
     pacf_vec = np.zeros(total_lag_p).reshape(-1, 1)
 
     for i in range(len(pacf_vec)):
         print(f"computing lag {i+1} of {len(pacf_vec)}")
 
-        beta_vec_i = pacf_ar_p_fit(y_vec = y_vec_demeaned,lag_p = i+1) # lag starts from 1
+        beta_vec_i = pacf_ar_p_fit(y_vec = y_vec,lag_p = i+1) # lag starts from 1
 
         pacf_vec[i] = beta_vec_i[-1]
 
     return pacf_vec
 
 
-def pacf_plot(pacf_vec,time_length):
-
-    lag_vec = np.arange(1, len(pacf_vec) + 1)
-    zeros_vec = np.zeros(len(pacf_vec))
-
-    sig_val = 1.96 * 1 / np.sqrt(time_length)
-
-    #print(sig_val)
-    # top_sig_vec = np.ones(len(acf_vec)) * 1.96 / 10
-    # bottom_sig_vec = np.ones(len(acf_vec)) * -1.96 / 10
-
-    top_sig_vec = np.ones(len(pacf_vec)) * sig_val
-    bottom_sig_vec = np.ones(len(pacf_vec)) * -sig_val
-
-    fig, ax = plt.subplots()
-
-    fig.suptitle(f"Partial autocorrelation function, N = {time_length}")
-
-    ax.plot(lag_vec, pacf_vec)
-    ax.plot(lag_vec, zeros_vec, "k--")
-    ax.plot(lag_vec, top_sig_vec, "r--")
-    ax.plot(lag_vec, bottom_sig_vec, "r--")
-    ax.set_yticks(np.arange(-0.5, 1.1, step=0.1))
-
-    ax.set_ylabel("partial autocorrelation at lag k")
-    ax.set_xlabel("lag k")
-
-    return fig
+# def pacf_comp(y_vec,total_lag_p):
+#
+#     """
+#     computes the partial autocorrelation function
+#     """
+#
+#     time_length = len(y_vec)
+#
+#     y_mean = np.sum(y_vec) / time_length
+#
+#     y_vec_demeaned = y_vec - y_mean
+#
+#     pacf_vec = np.zeros(total_lag_p).reshape(-1, 1)
+#
+#     for i in range(len(pacf_vec)):
+#         print(f"computing lag {i+1} of {len(pacf_vec)}")
+#
+#         beta_vec_i = pacf_ar_p_fit(y_vec = y_vec_demeaned,lag_p = i+1) # lag starts from 1
+#
+#         pacf_vec[i] = beta_vec_i[-1]
+#
+#     return pacf_vec
 
 
 def adf_comp(y_vec,lag_p):

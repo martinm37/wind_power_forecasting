@@ -3,97 +3,58 @@
 usage of the AR(p) model
 """
 
+import os
+import datetime
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
-import datetime
 
-from src.exploratory_statistics.statistical_functions import acf_comp, acf_plot
+
+
+from src.exploratory_statistics.statistical_functions import acf_comp
+from src.data_visualization.plotting_functions import acf_plot
 from src.statistical_models.ar_model import ar_p_model_comp, ar_p_model_forecast_comp
 from src.utils.paths import get_data_path, get_data_file
 
-# data preparation
+# data loading
 #-------------------
 
-file_name = "ods031_all_years_2.csv"
+file_name = "transformed_dataset.csv"
 data = get_data_file(file_name = file_name)
-data_selection = data[["Datetime","Measured & Upscaled","Monitored capacity"]]
 
-# converting time columns
-data_selection["Datetime"] = pd.to_datetime(data_selection["Datetime"],utc=True)
+# converting time columns and removing the time offset
+data["Datetime"] = pd.to_datetime(data["Datetime"] ,utc=True)
+data["Datetime"] = data["Datetime"].dt.tz_convert(None)
 
-# removing the time offset
-data_selection['Datetime'] = data_selection['Datetime'].dt.tz_convert(None)
+print(f'min power: {data["Measured & Upscaled"].min()}')
 
-# linear interpolation of the missing values
-data_selection["Measured & Upscaled"] = data_selection["Measured & Upscaled"].interpolate(method="linear")
 
 # selecting time slice
 date_from = datetime.datetime(year=2015, month=1, day=1, hour=0)
 date_to = datetime.datetime(year=2025, month=3, day=1, hour=0)
 
-data_select = data_selection[(data_selection["Datetime"] >= date_from) & (data_selection["Datetime"] < date_to)]
+data = data[(data["Datetime"] >= date_from) & (data["Datetime"] < date_to)]
 
-data_matrix = data_select[["Measured & Upscaled","Monitored capacity"]].to_numpy()
-
-#data_selection["Rescaled Power"] = data["Measured & Upscaled"] / data["Monitored capacity"] * 100
-
-print(f"max power: {np.max(data_matrix[:,0])}")
-print(f"min power: {np.min(data_matrix[:, 0])}")
-
-truncated_array = np.maximum(data_matrix[:,0],np.zeros(len(data_matrix[:,0]))).reshape(-1,1)
-arr_2 = data_matrix[:, 1].reshape(-1,1)
-data_matrix_truncated = np.concatenate([truncated_array,arr_2],axis=1)
-
-print(f"max power truncated: {np.max(data_matrix_truncated[:,0])}")
-print(f"min power truncated: {np.min(data_matrix_truncated[:, 0])}")
-
-relative_power_vec = (data_matrix_truncated[:,0] / data_matrix_truncated[:,1] * 100).reshape(-1,1)
+rescaled_power_vec = data["Rescaled Power"].to_numpy().reshape(-1,1)
 
 # model fitting
 #-------------------
 
-ar_p_model_solution = ar_p_model_comp(y_vec = relative_power_vec,lag_p = 15)
+ar_p_model_solution = ar_p_model_comp(y_vec = rescaled_power_vec,lag_p = 15)
 
-def original_fitted_comparison_plot(original_vec, fitted_vec):
 
-    fig, ax = plt.subplots()
 
-    fig.suptitle(f"original vs fitted vectors")
 
-    axis_vec = np.arange(0,len(original_vec))
-    zeros_vec = np.zeros(len(original_vec))
+# model validation
+# ------------------
 
-    ax.plot(axis_vec, original_vec)
-    ax.plot(axis_vec, fitted_vec)
-    ax.plot(axis_vec, zeros_vec, "k--")
 
-    # ax.set_ylabel("partial autocorrelation at lag k")
-    # ax.set_xlabel("lag k")
-
-    return fig
 
 # fig = original_fitted_comparison_plot(original_vec = ar_p_model_solution.Y_mat, fitted_vec = ar_p_model_solution.Y_mat_fitted)
 # plt.show()
 
 
-def error_plot(error_vec):
 
-    fig, ax = plt.subplots()
-
-    fig.suptitle(f"errors of the model")
-
-    axis_vec = np.arange(0,len(error_vec))
-    zeros_vec = np.zeros(len(error_vec))
-
-    ax.plot(axis_vec, error_vec)
-    ax.plot(axis_vec, zeros_vec, "k--")
-
-    # ax.set_ylabel("partial autocorrelation at lag k")
-    # ax.set_xlabel("lag k")
-
-    return fig
 
 # fig = error_plot(error_vec = ar_p_model_solution.errors_vector)
 # plt.show()
