@@ -1,4 +1,6 @@
 
+
+import pandas as pd
 import os.path
 
 def get_root_path():
@@ -7,5 +9,10 @@ def get_root_path():
 def get_data_path():
     return os.path.join(get_root_path(), "data")
 
+
+
+def get_data_file(file_name:str):
+    data = pd.read_csv(os.path.join(get_data_path(),file_name))
+    return data
 
 

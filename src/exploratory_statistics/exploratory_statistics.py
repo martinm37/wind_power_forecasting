@@ -189,11 +189,11 @@ def adf_comp(y_vec,lag_p):
         selection = y_vec_diff[i_indx : time_length - lag_p + i_indx , 0]
         X_mat[:,i] = selection
 
-    # creating vector for intercep and vector or normal (non differenced) values
+    # creating vector for intercept and vector or normal (non differenced) values
     ones_vec = np.ones(time_length - lag_p).reshape(-1, 1)
     y_vec_lag = y_vec_t_1[0:time_length - lag_p]
 
-    # creating the filan X matrix
+    # creating the final X matrix
     X_mat = np.concatenate((ones_vec,y_vec_lag, X_mat), axis=1)
 
     # OLS regression
