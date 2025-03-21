@@ -36,14 +36,14 @@ rescaled_power_vec = data_train["Rescaled Power"].to_numpy().reshape(-1,1)
 
 # model fitting
 #-------------------
-lag_p = 15
+lag_p = 12
 ar_p_model_solution = ar_p_model_comp(y_vec = rescaled_power_vec,lag_p = lag_p)
 
 
 # selecting time slice for forecasting - at least 96 quarters, better do 2 * 96 for a better visualisation
 # ------------------------------------------------------
 
-start_day = 10
+start_day = 3
 
 date_from = datetime.datetime(year=2025, month=2, day=start_day, hour=0)
 date_to = datetime.datetime(year=2025, month=2, day=start_day + 3, hour=0)

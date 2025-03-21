@@ -48,6 +48,9 @@ def ar_p_model_comp(y_vec,lag_p):
 def ar_p_model_forecast_comp(starting_y_vec, beta_vec, horizon):
 
     """
+
+    starting_y_vec - newest observations on top
+
     starting_y_vec is one element shorter than beta_vec,
     to account for the intercept term
     """
