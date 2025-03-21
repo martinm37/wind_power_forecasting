@@ -49,20 +49,6 @@ def error_plot(error_vec):
 
     return fig
 
-
-def wind_series_plotter_rescaled(time_vec,power_vec,frequency):
-
-    fig, ax = plt.subplots()
-
-    fig.suptitle(f"Wind power time series, rescaled, {frequency} frequency")
-
-    ax.plot(time_vec,power_vec)
-    ax.set_ylabel("power [% of total capacity]")
-    ax.set_xlabel("time")
-
-    return fig
-
-
 def acf_plot(acf_vec,time_length):
 
     lag_vec = np.arange(1, len(acf_vec) + 1)
@@ -121,3 +107,42 @@ def pacf_plot(pacf_vec,time_length):
     ax.set_xlabel("lag k")
 
     return fig
+
+
+def forecast_evaluation_plot(forecast_vec,realised_vec,initial_vec,lag_p):
+
+    fig, ax = plt.subplots()
+
+    fig.suptitle(f"Forecasted vs realized values")
+
+    full_axis_vec = np.arange(0, len(initial_vec))
+    init_range = full_axis_vec[:-96]
+    forecast_range = full_axis_vec[len(initial_vec)-96:]
+
+    zeros_vec = np.zeros(len(initial_vec))
+
+    ax.plot(full_axis_vec, zeros_vec, "k--")
+    ax.plot(init_range, initial_vec[:-96], "k")
+    ax.plot(forecast_range, forecast_vec, label = "forecast")
+    ax.plot(forecast_range, realised_vec, label = "realization")
+
+    ax.legend()
+
+    return fig
+
+
+# def forecast_evaluation_plot(forecast_vec,realised_vec):
+#
+#     fig, ax = plt.subplots()
+#
+#     fig.suptitle(f"Forecasted vs realized values")
+#
+#     axis_vec = np.arange(0, len(forecast_vec))
+#     zeros_vec = np.zeros(len(forecast_vec))
+#
+#     ax.plot(axis_vec, forecast_vec, label = "forecast")
+#     ax.plot(axis_vec, realised_vec, label = "realization")
+#     ax.plot(axis_vec, zeros_vec, "k--")
+#     ax.legend()
+#
+#     return fig
