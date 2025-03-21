@@ -3,8 +3,10 @@
 creates the rescaled power vector
 """
 
-import pandas as pd
 import os
+import numpy as np
+import pandas as pd
+
 
 from src.utils.paths import get_data_file, get_data_path
 
@@ -18,7 +20,29 @@ data_selection["Datetime"] = pd.to_datetime(data_selection["Datetime"] ,utc=True
 # removing the time offset
 data_selection['Datetime'] = data_selection['Datetime'].dt.tz_convert(None)
 
-data_selection["Rescaled Power"] = data["Measured & Upscaled"] / data["Monitored capacity"] * 100
+# linear interpolation of the missing values
+data_selection["Measured & Upscaled"] = data_selection["Measured & Upscaled"].interpolate(method="linear")
+
+
+# lowe bounding the power vector at 0
+print(f'min power: {data_selection["Measured & Upscaled"].min()}')
+
+power_vec = data_selection["Measured & Upscaled"].to_numpy()
+power_vec_bounded = np.maximum(power_vec,np.zeros(len(power_vec))) #.reshape(-1,1)
+
+# creating the vector of relative power
+capacity_vec = data_selection["Monitored capacity"].to_numpy()
+rescaled_power_vec = power_vec / capacity_vec * 100
+
+# bounding relative power vector - there are values below 0 and above 100
+rescaled_power_vec_lower_bounded = np.maximum(rescaled_power_vec,np.zeros(len(power_vec))) #.reshape(-1,1)
+rescaled_power_vec_bounded = np.minimum(rescaled_power_vec_lower_bounded,np.ones(len(power_vec))*100)
+
+# storing in the data frame
+data_selection["Measured & Upscaled"] = pd.Series(power_vec_bounded)
+data_selection["Rescaled Power"] = pd.Series(rescaled_power_vec_bounded)
+print(f'min power: {data_selection["Measured & Upscaled"].min()}')
+
 
 data_selection.to_csv(os.path.join(get_data_path(),f"transformed_dataset.csv"), sep=",", index=False)
 

@@ -55,10 +55,10 @@ data_half_yearly[:] = data_half_yearly.iloc[::-1]
 # plotting - original series, different time aggregation
 # ----------------------
 
-# data_select = data[(data["Datetime"] >= date_from) & (data["Datetime"] < date_to)]
-# fig = wind_series_plotter(data_select["Datetime"],data_select["Measured & Upscaled"], frequency = "15min")
-# plt.show()
-#
+data_select = data[(data["Datetime"] >= date_from) & (data["Datetime"] < date_to)]
+fig = wind_series_plotter(data_select["Datetime"],data_select["Measured & Upscaled"], frequency = "15min")
+plt.show()
+
 # data_select = data_hourly[(data_hourly["Datetime"] >= date_from) & (data_hourly["Datetime"] < date_to)]
 # fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="hourly")
 # plt.show()
@@ -100,6 +100,10 @@ data_half_yearly[:] = data_half_yearly.iloc[::-1]
 
 # plotting - rescaled series
 # ----------------------
+
+data_select = data[(data["Datetime"] >= date_from) & (data["Datetime"] < date_to)]
+fig = wind_series_plotter(data_select["Datetime"],data_select["Rescaled Power"], frequency = "15min")
+plt.show()
 
 # data_select = data_weekly[(data_weekly["Datetime"] >= date_from) & (data_weekly["Datetime"] < date_to)]
 # fig = wind_series_plotter_rescaled(data_select["Datetime"], data_select["Rescaled Power"], frequency="weekly")

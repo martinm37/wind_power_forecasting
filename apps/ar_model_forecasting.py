@@ -9,14 +9,9 @@ import matplotlib.pyplot as plt
 import os
 import datetime
 
-from src.exploratory_statistics.exploratory_statistics import acf_comp, acf_plot
+from src.exploratory_statistics.statistical_functions import acf_comp, acf_plot
 from src.statistical_models.ar_model import ar_p_model_comp, ar_p_model_forecast_comp
-from src.utils.paths import get_data_path
-
-
-def get_data_file(file_name:str):
-    data = pd.read_csv(os.path.join(get_data_path(),file_name))
-    return data
+from src.utils.paths import get_data_path, get_data_file
 
 # data preparation
 #-------------------

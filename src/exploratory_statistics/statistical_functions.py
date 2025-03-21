@@ -6,12 +6,7 @@ import os.path
 import datetime
 
 
-from src.utils.paths import get_data_path
-
-
-def get_data_file(file_name:str):
-    data = pd.read_csv(os.path.join(get_data_path(),file_name))
-    return data
+from src.utils.paths import get_data_path, get_data_file
 
 
 def wind_series_plotter_rescaled(time_vec,power_vec,frequency):
@@ -214,6 +209,17 @@ def adf_comp(y_vec,lag_p):
 
     return test_statistic
 
+def difference_vec_comp(y_vec,seasonality):
+
+    time_length = len(y_vec)
+
+    y_vec_t = y_vec[:time_length - seasonality]
+    y_vec_t_s = y_vec[seasonality:]
+
+    difference_vec = y_vec_t - y_vec_t_s
+
+    return difference_vec
+
 
 
 
@@ -280,16 +286,7 @@ if __name__ == "__main__":
 
     # exploring a possibility of seasonal (yearly) differences
 
-    def difference_vec_comp(y_vec,seasonality):
 
-        time_length = len(y_vec)
-
-        y_vec_t = y_vec[:time_length - seasonality]
-        y_vec_t_s = y_vec[seasonality:]
-
-        difference_vec = y_vec_t - y_vec_t_s
-
-        return difference_vec
 
 
     seasonal_diff_y_vec = difference_vec_comp(y_vec = relative_power_vec, seasonality = int(4 * 24 * 365.25))
