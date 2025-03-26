@@ -12,7 +12,7 @@ PROJECT_PATH="$(dirname "$SCRIPT_PATH")"
 # executing test python script
 # this script goes to the project directory, activates venv, and runs the .py script
 cd "$PROJECT_PATH" || { echo "Directory not found"; exit 1; }
-. "$PROJECT_PATH"/venv/bin/activate
+. "$PROJECT_PATH"/venv/bin/activate # works with ".", does not work with "source"
 python3.11 -m src.testing.test_script
 
 
