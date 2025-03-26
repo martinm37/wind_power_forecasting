@@ -201,3 +201,8 @@ fabric.properties
 
 #aws_admin
 
+# files to be excluded from git
+log_files/
+old/
+
+

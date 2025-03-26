@@ -1,6 +1,6 @@
 
 """
-Stage 1: obtaining the data
+python script for continuously fetching data from Elia
 """
 
 import requests
@@ -15,17 +15,18 @@ API_URL = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods086/rec
 # }
 
 
-# #url = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods086/records?limit=20"
+url = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods086/records?limit=20"
 # url = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods086/records?limit=100"
 
 # response = requests.get(API_URL,params=params)
-#
-# data = response.json()
+response = requests.get(API_URL)
 
-# print(f"response status code: {response.status_code}")
+data = response.json()
 
+print(f"response status code: {response.status_code}")
+print(data)
 
-print("hello there my beautiful")
+#print("hello there my beautiful")
 
 
 

@@ -39,7 +39,7 @@ rescaled_power_vec = data["Rescaled Power"].to_numpy().reshape(-1,1)
 
 # model fitting
 #-------------------
-ar_p_model_solution = ar_p_model_comp(y_vec = rescaled_power_vec,lag_p = 12)
+ar_p_model_solution = ar_p_model_comp(y_vec = rescaled_power_vec,lag_p = 5)
 
 
 # model validation

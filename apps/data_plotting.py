@@ -18,8 +18,8 @@ data["Datetime"] = data["Datetime"].dt.tz_convert(None)
 
 # selecting plotting window
 # --------------------------
-date_from = datetime.datetime(year=2015, month=1, day=1, hour=0)
-date_to = datetime.datetime(year=2025, month=3, day=1, hour=0)
+date_from = datetime.datetime(year=2025, month=2, day=1, hour=0)
+date_to = datetime.datetime(year=2025, month=3, day=10, hour=0)
 
 # time transformations and plotting
 # ----------------------------------
@@ -55,9 +55,9 @@ data_half_yearly[:] = data_half_yearly.iloc[::-1]
 # plotting - original series, different time aggregation
 # ----------------------
 
-data_select = data[(data["Datetime"] >= date_from) & (data["Datetime"] < date_to)]
-fig = wind_series_plotter(data_select["Datetime"],data_select["Measured & Upscaled"], frequency = "15min")
-plt.show()
+# data_select = data[(data["Datetime"] >= date_from) & (data["Datetime"] < date_to)]
+# fig = wind_series_plotter(data_select["Datetime"],data_select["Measured & Upscaled"], frequency = "15min")
+# plt.show()
 
 # data_select = data_hourly[(data_hourly["Datetime"] >= date_from) & (data_hourly["Datetime"] < date_to)]
 # fig = wind_series_plotter(data_select["Datetime"], data_select["Measured & Upscaled"], frequency="hourly")
