@@ -2,6 +2,7 @@
 """
 python script for continuously fetching data from Elia
 """
+
 import pandas as pd
 import requests
 import datetime
@@ -17,13 +18,12 @@ selected_timeslot = current_time_UTC_dalayed_rounded.strftime("%Y-%m-%dT%H:%M:%S
 
 
 # URL for the Elia Wind Power Data:
-API_URL = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods086/records?limit=10"
+API_URL = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods086/records?limit=20"
 
 # SQL query
 params = {
     "select" : {"datetime","offshoreonshore","realtime","monitoredcapacity"},
-    "where" : {f"offshoreonshore = 'Offshore' and datetime = date'{selected_timeslot}'"},
-    "order by": {"realtime DESC"}
+    "where" : {f"offshoreonshore = 'Offshore' and datetime = date'{selected_timeslot}'"}
 }
 
 url = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods086/records?limit=20"
