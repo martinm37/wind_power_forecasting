@@ -1,33 +1,21 @@
 
-"""
-python script for continuously fetching data from Elia
-"""
-
-import requests
 
 
-# URL for the Elia Wind Power Data:
-API_URL = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods086/records?limit=20"
+def quarter_hour_down_rounder(original_time):
 
-# params = {
-#     "offshoreonshore" : "Offshore",
-#     "datetime": "2025-03-10T23:30:00+00:00"
-# }
+    time_minute = original_time.minute
 
+    if time_minute >= 0 and time_minute < 15:
+        new_minute = 0
+    elif time_minute >= 15 and time_minute < 30:
+        new_minute = 15
+    elif time_minute >= 30 and time_minute < 45:
+        new_minute = 30
+    elif time_minute >= 45 and time_minute < 60:
+        new_minute = 45
+    else:
+        raise "Invalid time error"
 
-url = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods086/records?limit=20"
-# url = "https://opendata.elia.be/api/explore/v2.1/catalog/datasets/ods086/records?limit=100"
-
-# response = requests.get(API_URL,params=params)
-response = requests.get(API_URL)
-
-data = response.json()
-
-print(f"response status code: {response.status_code}")
-print(data)
-
-#print("hello there my beautiful")
-
-
-
+    new_time = original_time.replace(minute=new_minute,second=0)
+    return new_time
 

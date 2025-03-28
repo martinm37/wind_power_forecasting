@@ -204,5 +204,5 @@ fabric.properties
 # files to be excluded from git
 log_files/
 old/
-
+*.json
 
