@@ -10,7 +10,10 @@ import datetime
 from src.data_download.data_download import quarter_hour_down_rounder
 
 current_time = datetime.datetime.now()
-current_time_UTC = current_time - datetime.timedelta(hours=1) # TODO: somehow account for annual summer time changes
+# winter time
+#current_time_UTC = current_time - datetime.timedelta(hours=1) # TODO: somehow account for annual summer time changes automatically
+# summer time
+current_time_UTC = current_time - datetime.timedelta(hours=2)
 current_time_UTC_dalayed = current_time_UTC - datetime.timedelta(minutes=15) # time delay is cca 30 minutes
 current_time_UTC_dalayed_rounded = quarter_hour_down_rounder(current_time_UTC_dalayed)
 
