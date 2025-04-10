@@ -4,6 +4,7 @@
 import os
 import mysql.connector
 from mysql.connector import errorcode
+import pandas as pd
 
 try:
     cnx = mysql.connector.connect(user=os.environ["TEST_USER_NAME"],
@@ -31,16 +32,21 @@ else:
             """)
 
     cursor.execute(query)
+    fetched_data = cursor.fetchall()
 
-    # for (first_name , last_name , title ) in cursor:
-    #     print(first_name , last_name , title)
-
-    # print(cursor.fetchall())
-
-    for i in cursor.fetchall():
-        print(i)
+    test_df = pd.DataFrame(data=fetched_data, columns=cursor.column_names)
 
     cursor.close()
     cnx.close()
 
+
 # print("hello there xdd")
+
+
+# # for (first_name , last_name , title ) in cursor:
+# #     print(first_name , last_name , title)
+#
+# # print(cursor.fetchall())
+#
+# for i in cursor.fetchall():
+#     print(i)
