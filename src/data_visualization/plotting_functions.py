@@ -131,6 +131,30 @@ def forecast_evaluation_plot(forecast_vec,realised_vec,initial_vec,lag_p):
     return fig
 
 
+def forecast_comparison_plot(forecast_vec_1,forecast_vec_2,realised_vec,initial_vec,lag_p):
+
+    fig, ax = plt.subplots()
+
+    fig.suptitle(f"Forecasted vs realized values")
+
+    len_1 = 2 * 96
+
+    full_axis_vec = np.arange(0, len_1)
+    init_range = full_axis_vec[:-96]
+    forecast_range = full_axis_vec[len_1-96:]
+
+    zeros_vec = np.zeros(len_1)
+
+    ax.plot(full_axis_vec, zeros_vec, "k--")
+    ax.plot(init_range, initial_vec[:96], "k")
+    ax.plot(forecast_range, forecast_vec_1, label = "my forecast")
+    ax.plot(forecast_range, forecast_vec_2, label="statsmodels forecast")
+    ax.plot(forecast_range, realised_vec, label = "realization")
+
+    ax.legend()
+
+    return fig
+
 # def forecast_evaluation_plot(forecast_vec,realised_vec):
 #
 #     fig, ax = plt.subplots()
