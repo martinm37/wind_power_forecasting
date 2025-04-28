@@ -135,6 +135,8 @@ def forecast_comparison_plot(forecast_vec_1,forecast_vec_2,realised_vec,initial_
 
     fig, ax = plt.subplots()
 
+    initial_vec = np.flip(initial_vec)
+
     fig.suptitle(f"Forecasted vs realized values")
 
     len_1 = 2 * 96

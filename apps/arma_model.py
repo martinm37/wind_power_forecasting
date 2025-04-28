@@ -24,7 +24,7 @@ data["Datetime"] = data["Datetime"].dt.tz_convert(None)
 
 # selecting time slice for training
 # ---------------------------------
-date_from = datetime.datetime(year=2023, month=1, day=1, hour=0)
+date_from = datetime.datetime(year=2015, month=1, day=1, hour=0)
 date_to = datetime.datetime(year=2025, month=1, day=1, hour=0)
 
 data_train = data[(data["Datetime"] >= date_from) & (data["Datetime"] < date_to)]
@@ -38,8 +38,8 @@ rescaled_power_vec = data_train["Rescaled Power"].to_numpy().reshape(-1,1)
 lag_p = 15
 
 
-# arma_model = ARIMA(endog=rescaled_power_vec,order=(lag_p,0,0))
-arma_model = ARIMA(endog=rescaled_power_vec,order=(15,0,5))
+arma_model = ARIMA(endog=rescaled_power_vec,order=(lag_p,0,0))
+# arma_model = ARIMA(endog=rescaled_power_vec,order=(1,0,0),seasonal_order=(0,1,0,35064)) # - this uses all ram and swap xd
 res = arma_model.fit()
 print(res.summary())
 
@@ -67,6 +67,8 @@ also i do not yet know how to store the parameters, which is necessary at larger
 #-------------------
 
 ar_p_model_solution = ar_p_model_comp(y_vec = rescaled_power_vec,lag_p = lag_p)
+
+print(ar_p_model_solution.beta_vector)
 
 
 # selecting time slice for forecasting - at least 96 quarters, better do 2 * 96 for a better visualisation
