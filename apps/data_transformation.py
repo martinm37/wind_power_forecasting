@@ -1,14 +1,12 @@
 
 """
 transforms historical wind power production data obtained from a .csv file
-and upload it to a local MySQL database
 """
 
 import os
 import numpy as np
 import pandas as pd
-from sqlalchemy import create_engine, URL
-from sqlalchemy.exc import SQLAlchemyError
+
 
 from src.utils.paths import get_data_file, get_data_path
 
@@ -16,17 +14,19 @@ file_name = "ods031_all_years_edit.csv"
 data = get_data_file(file_name = file_name)
 data_selection = data[["Datetime" ,"Measured & Upscaled" ,"Monitored capacity"]]
 
-# converting time columns
-data_selection["Datetime"] = pd.to_datetime(data_selection["Datetime"] ,utc=True)
+# work on the time column
+data_selection["Datetime"] = pd.to_datetime(data_selection["Datetime"] ,utc=True) # converting to time
+data_selection['Datetime'] = data_selection['Datetime'].dt.tz_convert(None) # removing the time offset
 
-# removing the time offset
-data_selection['Datetime'] = data_selection['Datetime'].dt.tz_convert(None)
+# removing NaT (Not a Time) observations
+# two functions: .isnull and .notnull -> same just different True/False values
+non_null_rows = pd.notnull(data['Datetime']) # True: normal time, False: NaT
+data_selection = data_selection.loc[non_null_rows]
 
 # linear interpolation of the missing values
 data_selection["Measured & Upscaled"] = data_selection["Measured & Upscaled"].interpolate(method="linear")
 
-
-# lowe bounding the power vector at 0
+# lower bounding the power vector at 0
 print(f'min power: {data_selection["Measured & Upscaled"].min()}')
 
 power_vec = data_selection["Measured & Upscaled"].to_numpy()
@@ -49,28 +49,5 @@ print(f'min power: {data_selection["Measured & Upscaled"].min()}')
 data_selection.to_csv(os.path.join(get_data_path(),f"transformed_dataset.csv"), sep=",", index=False)
 
 
-data_selection = data_selection.rename(columns = {"Datetime" :"datetime","Measured & Upscaled" :"measured_and_upscaled", "Monitored capacity":"monitored_capacity"})
-
-# creating the engine for the connection
-#engine = (create_engine(f'mysql+mysqlconnector://{os.environ["TEST_USER_NAME_2"]}:{os.environ["TEST_USER_PASSWORD_2"]}@localhost:3306/test_time_series_db'))
-
-url_object = URL.create(
-    drivername = "mysql+mysqlconnector",
-    username = os.environ["TEST_USER_NAME_2"],
-    password = os.environ["TEST_USER_PASSWORD_2"],
-    host = "localhost",
-    port = 3306,
-    database = "test_time_series_db")
-
-engine = create_engine(url_object)
-
-try:
-    engine.connect()
-    # truncated_df.to_sql("test_time_series_table", con = engine, if_exists="append", index=False)
-except SQLAlchemyError as err:
-    print(err)
-else:
-    data_selection.to_sql("test_time_series_table", con = engine, if_exists="append", index=False)
-    print("connection established successfully")
 
 
