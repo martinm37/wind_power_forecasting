@@ -7,12 +7,24 @@ from mysql.connector import errorcode
 import pandas as pd
 import datetime
 
+connection_dict = {
+    "user":os.environ["TEST_USER_NAME_2"],
+    "password":os.environ["TEST_USER_PASSWORD_2"],
+    "host" : "localhost",
+    "database" : "test_time_series_db"
+}
+
 
 try:
-    cnx = mysql.connector.connect(user=os.environ["TEST_USER_NAME_2"],
-                                  password=os.environ["TEST_USER_PASSWORD_2"],
-                                  host = "localhost",
-                                  database = "test_time_series_db")
+    cnx = mysql.connector.connect(user=connection_dict["user"],
+                                  password=connection_dict["password"],
+                                  host=connection_dict["host"],
+                                  database=connection_dict["database"])
+
+    # cnx = mysql.connector.connect(user=os.environ["TEST_USER_NAME_2"],
+    #                               password=os.environ["TEST_USER_PASSWORD_2"],
+    #                               host = "localhost",
+    #                               database = "test_time_series_db")
 
 except mysql.connector.Error as err:
 

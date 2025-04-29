@@ -1,0 +1,155 @@
+
+import os
+import mysql.connector
+
+
+connection_dict = {
+    "user":os.environ["STANDARD_USER_1"],
+    "password":os.environ["STANDARD_USER_1_PASSWORD"],
+    "host":"localhost",
+    "port":3306,
+    "database":"wind_power_db"}
+
+
+# INSERT QUERIES
+# ----------------------------------------------------------------------------------------------------------------------
+
+def insert_query_full(data_datetime, data_power, data_monitoredcapacity, data_rescaled_power):
+
+    try:
+        cnx = mysql.connector.connect(user=connection_dict["user"],
+                                      password=connection_dict["password"],
+                                      host=connection_dict["host"],
+                                      port=connection_dict["port"],
+                                      database=connection_dict["database"])
+
+    except mysql.connector.Error as err:
+            print(err)
+
+    else:
+        cursor = cnx.cursor()
+
+        insert_query = ("""
+                        INSERT INTO wind_power_transformed_tbl
+                        (datetime, measured_and_upscaled, monitored_capacity, rescaled_power)
+                        VALUES
+                        (%s, %s, %s, %s);
+                        """)
+
+        query_data = (data_datetime, data_power, data_monitoredcapacity, data_rescaled_power)
+
+        # inserting new data into the DB
+        cursor.execute(insert_query, query_data)
+
+        # commiting
+        cnx.commit()
+
+        # exiting
+        cursor.close()
+        cnx.close()
+
+
+def insert_query_partial(data_datetime, data_monitoredcapacity):
+
+    """
+    used when only data_monitoredcapacity is available
+    -> this will leave the other columns as NULL
+    """
+
+    try:
+        cnx = mysql.connector.connect(user=connection_dict["user"],
+                                      password=connection_dict["password"],
+                                      host=connection_dict["host"],
+                                      port=connection_dict["port"],
+                                      database=connection_dict["database"])
+
+    except mysql.connector.Error as err:
+        print(err)
+
+    else:
+        cursor = cnx.cursor()
+
+        insert_query = ("""
+                        INSERT INTO wind_power_transformed_tbl
+                        (datetime, monitored_capacity)
+                        VALUES
+                        (%s, %s);
+                        """)
+
+        query_data = (data_datetime, data_monitoredcapacity)
+
+        # inserting new data into the DB
+        cursor.execute(insert_query, query_data)
+
+        # commiting
+        cnx.commit()
+
+        # exiting
+        cursor.close()
+        cnx.close()
+
+# SELECT QUERIES
+# ----------------------------------------------------------------------------------------------------------------------
+
+def select_query_for_latest_monitored_capacity():
+
+    try:
+        cnx = mysql.connector.connect(user=connection_dict["user"],
+                                      password=connection_dict["password"],
+                                      host=connection_dict["host"],
+                                      port=connection_dict["port"],
+                                      database=connection_dict["database"])
+
+    except mysql.connector.Error as err:
+            print(err)
+
+    else:
+        cursor = cnx.cursor()
+
+        select_query = ("""
+                        SELECT datetime, monitored_capacity
+                        FROM wind_power_transformed_tbl
+                        ORDER BY datetime DESC
+                        LIMIT 1
+                        """)
+
+        cursor.execute(select_query)
+        fetched_data = cursor.fetchall()
+
+        return fetched_data
+
+# UPDATE QUERIES
+# ----------------------------------------------------------------------------------------------------------------------
+
+def update_query(data_datetime, data_power, data_rescaled_power):
+    try:
+        cnx = mysql.connector.connect(user=connection_dict["user"],
+                                      password=connection_dict["password"],
+                                      host=connection_dict["host"],
+                                      port=connection_dict["port"],
+                                      database=connection_dict["database"])
+
+    except mysql.connector.Error as err:
+
+        print(err)
+
+    else:
+        cursor = cnx.cursor()
+
+        update_query = ("""
+                        UPDATE wind_power_transformed_tbl
+                        SET measured_and_upscaled = %s, rescaled_power = %s
+                        WHERE datetime = %s;
+                        """)
+
+        query_data = (data_power, data_rescaled_power, data_datetime)
+
+        # inserting new data into the DB
+        cursor.execute(update_query, query_data)
+
+        # commiting
+        cnx.commit()
+
+        # exiting
+        cursor.close()
+        cnx.close()
