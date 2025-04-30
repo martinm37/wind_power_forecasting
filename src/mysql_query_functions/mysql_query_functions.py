@@ -36,6 +36,8 @@ def insert_query_full(data_datetime, data_power, data_monitoredcapacity, data_re
                         (%s, %s, %s, %s);
                         """)
 
+        # INSERT IGNORE INTO query inserts data if record with time key is not already present, otherwise does nothing
+
         query_data = (data_datetime, data_power, data_monitoredcapacity, data_rescaled_power)
 
         # inserting new data into the DB
@@ -76,6 +78,8 @@ def insert_query_partial(data_datetime, data_monitoredcapacity):
                         (%s, %s);
                         """)
 
+        # INSERT IGNORE INTO query inserts data if record with time key is not already present, otherwise does nothing
+
         query_data = (data_datetime, data_monitoredcapacity)
 
         # inserting new data into the DB
@@ -108,6 +112,34 @@ def select_query_for_latest_monitored_capacity():
 
         select_query = ("""
                         SELECT datetime, monitored_capacity
+                        FROM wind_power_transformed_tbl
+                        ORDER BY datetime DESC
+                        LIMIT 1
+                        """)
+
+        cursor.execute(select_query)
+        fetched_data = cursor.fetchall()
+
+        return fetched_data
+
+
+def select_query_for_latest_full_record():
+
+    try:
+        cnx = mysql.connector.connect(user=connection_dict["user"],
+                                      password=connection_dict["password"],
+                                      host=connection_dict["host"],
+                                      port=connection_dict["port"],
+                                      database=connection_dict["database"])
+
+    except mysql.connector.Error as err:
+            print(err)
+
+    else:
+        cursor = cnx.cursor()
+
+        select_query = ("""
+                        SELECT *
                         FROM wind_power_transformed_tbl
                         ORDER BY datetime DESC
                         LIMIT 1
@@ -153,3 +185,54 @@ def update_query(data_datetime, data_power, data_rescaled_power):
         # exiting
         cursor.close()
         cnx.close()
+
+def test_for_already_present_monitored_capacity(selected_timeslot_datetime):
+
+    """
+    I could do INSERT IGNORE INTO query instead, But I do want to know if there was an attempt for
+    a connection to DB or not, so I will rather do it like this
+    """
+
+    # data already present test
+    latest_record = select_query_for_latest_full_record()
+    latest_record_datetime = latest_record[0][0]
+    latest_record_power = latest_record[0][1]
+    latest_record_monitored_capacity = latest_record[0][2]
+    latest_record_rescaled_power = latest_record[0][3]
+
+    if ((selected_timeslot_datetime == latest_record_datetime)
+        and (latest_record_monitored_capacity is not None)):
+        return True
+
+    else:
+        return False
+
+
+def test_for_already_present_full_record(selected_timeslot_datetime):
+
+    """
+    Because of INSERT IGNORE INTO query I only insert the monitored_capacity once.
+    But for the rest of the data I use the UPDATE query. Therefore, I use this test
+    to see if 1) there is already a record with the current time and 2) all of the data
+    are not NULL. If these two conditions are true, we do not update
+    """
+
+    # data already present test
+    latest_record = select_query_for_latest_full_record()
+    latest_record_datetime = latest_record[0][0]
+    latest_record_power = latest_record[0][1]
+    latest_record_monitored_capacity = latest_record[0][2]
+    latest_record_rescaled_power = latest_record[0][3]
+
+    if ((selected_timeslot_datetime == latest_record_datetime)
+        and (latest_record_power is not None)
+        and (latest_record_monitored_capacity is not None)
+        and (latest_record_rescaled_power is not None)):
+        return True
+    else:
+        return False
+
+
+
+
+
