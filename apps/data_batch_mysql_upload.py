@@ -28,6 +28,16 @@ data = data.rename(
 
 #TODO: add here method of obtaining already existing data, and creating only a subset to be inserted
 
+#TODO:
+# I need to have a way of inserting missing data into the DB:
+# 1) I can have one script such as this one to batch insert days or moths of missing data
+# 2) I will also need to somehow replace missing data which occurred within last 24 hours, which is the time
+# after which historical dataset has the values. One way would be to drop and replace the values, as this would
+# enable batch insert, as there is no batch INSERT OR UPDATE. But this would solve issues of connection or other
+# non OpenData problems, if there are missing data currently online, this will not help it. For this I should do
+# a linear interpolation as a hotfix for the forecaster.
+
+
 # creating the engine for the connection
 url_object = URL.create(
     drivername = "mysql+mysqlconnector",
