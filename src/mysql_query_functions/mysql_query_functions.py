@@ -179,6 +179,32 @@ def select_query_for_latest_full_record():
 
         return fetched_data
 
+def select_query_for_datetime_column():
+
+    try:
+        cnx = mysql.connector.connect(user=connection_dict["user"],
+                                      password=connection_dict["password"],
+                                      host=connection_dict["host"],
+                                      port=connection_dict["port"],
+                                      database=connection_dict["database"])
+
+    except mysql.connector.Error as err:
+            print(err)
+
+    else:
+        cursor = cnx.cursor()
+
+        select_query = ("""
+                        SELECT datetime
+                        FROM wind_power_transformed_tbl
+                        ORDER BY datetime DESC
+                        """)
+
+        cursor.execute(select_query)
+        fetched_data = cursor.fetchall()
+
+        return fetched_data
+
 # UPDATE QUERIES
 # ----------------------------------------------------------------------------------------------------------------------
 
