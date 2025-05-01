@@ -1,20 +1,21 @@
 
 """
 python script for fetching up last 100 available data points from Elia -> cca. the current day (96 quarters)
+-> but it seems that data in this dataset is always available only from 22.00 of the previous day, not earlier
 """
 
 import requests
 import datetime
 import pandas as pd
+import numpy as np
 
 
 from src.data_download.data_download import quarter_hour_down_rounder
+from src.mysql_query_functions.mysql_query_functions import select_query_for_latest_monitored_capacity, delete_query, \
+    pandas_df_insert_query
 
 
 def data_fetch_current_day_function():
-
-    exit_status = "" #will contain which branch got executed
-
 
     current_time = datetime.datetime.now()
 
@@ -70,22 +71,65 @@ def data_fetch_current_day_function():
         data_df['datetime'] = data_df['datetime'].dt.tz_convert(None)
         data_df = data_df.sort_values(by="datetime", ascending=False)
 
+        """
+        After sorting I have to reset the index!!!!!!, Otherwise then can be problems down the line!!
+        """
+        data_df = data_df.reset_index(drop=True)
+
         # dropping the unnecessary column
         data_df = data_df.drop(columns="offshoreonshore")
 
+        data_df = data_df.rename(
+            columns={"datetime": "datetime",
+                     "realtime": "measured_and_upscaled",
+                     "monitoredcapacity": "monitored_capacity"})
+
         """
-        next steps: obtain the monitored capacity
-        overwrite the column with it
-        create the rescaled power column
-        update the rows in DB: first delete them, then insert the new ones
+        for some reason, the monitored capacity in this dataset is always None, thus I will fetch it in a similar way
+        as I do for the normal fetcher
         """
 
+        fetched_monitored_capacity = select_query_for_latest_monitored_capacity()[0][1]
+        data_df["monitored_capacity"] = fetched_monitored_capacity
 
+        # numpy operations
+        measured_and_upscaled_vec = data_df["measured_and_upscaled"].to_numpy()
+        measured_and_upscaled_vec = np.minimum(np.maximum(measured_and_upscaled_vec,0),fetched_monitored_capacity) # bounding the power vector
+        monitored_capacity_vec = data_df["monitored_capacity"].to_numpy()
+        rescaled_power_vec = measured_and_upscaled_vec / monitored_capacity_vec * 100
+
+        data_df["measured_and_upscaled"] = pd.Series(measured_and_upscaled_vec)
+        data_df["monitored_capacity"] = pd.Series(monitored_capacity_vec)
+        data_df["rescaled_power"] = pd.Series(rescaled_power_vec)
+
+        """
+        As there is no UPDATE option for pandas .to_sql() method, I will do the updating by
+        first deleting all of the observations within the given time frame of the new data, and
+        then inserting the new data
+        """
+
+        # I had to do this convoluted mess for a single datetime value, to remove the timezone and convert it to datetime
+        datetime_end = pd.to_datetime(data_df["datetime"].iloc[0], utc=True)
+        datetime_end = datetime_end.tz_convert(None)
+        datetime_end = datetime_end.to_pydatetime()
+
+        datetime_start = pd.to_datetime(data_df["datetime"].iloc[-1], utc=True)
+        datetime_start = datetime_start.tz_convert(None)
+        datetime_start = datetime_start.to_pydatetime()
+
+        # UPDATING DATA
+        # --------------------------------------------
+
+        # deleting original
+        delete_query(datetime_start, datetime_end)
+
+        # inserting new
+        pandas_df_insert_query(data_df)
 
 
 
 if __name__ == "__main__":
-    exit_state = data_fetch_current_day_function()
-    print(datetime.datetime.now(),exit_state)
+    data_fetch_current_day_function()
+
 
 

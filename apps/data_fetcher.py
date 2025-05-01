@@ -63,6 +63,18 @@ def data_fetch_function():
     else:
 
         data = response.json()
+
+        if len(data['results'][0]) == 0:
+            # for some reason, this error spontaneously happens and I have no idea why,
+            # - it is not caught by RequestException handling
+            print("Here is the weird error?")
+            print(data)
+            print(data['results'])
+            exit_status = "zero_length_error"
+            return exit_status
+        else:
+            pass
+
         data_entries = data['results'][0]
 
         # I had to do this convoluted mess for a single datetime value, to remove the timezone and convert it to datetime
