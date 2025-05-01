@@ -12,6 +12,9 @@ def get_data_path():
 def get_log_files_path():
     return os.path.join(get_root_path(), "log_files")
 
+def get_pickles_path():
+    return os.path.join(get_root_path(), "pickle_files")
+
 
 def get_data_file(file_name:str):
     data = pd.read_csv(os.path.join(get_data_path(),file_name))
