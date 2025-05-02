@@ -17,8 +17,8 @@ from src.utils.paths import get_data_file
 
 # selecting plotting window
 # --------------------------
-date_from = datetime.datetime(year=2025, month=2, day=1, hour=0)
-date_to = datetime.datetime(year=2025, month=3, day=10, hour=0)
+date_from = datetime.datetime(year=2025, month=2, day=15, hour=0)
+date_to = datetime.datetime(year=2025, month=2, day=28, hour=0)
 
 # obtaining data from db
 # --------------------------

@@ -10,7 +10,7 @@ import pandas as pd
 
 from src.utils.paths import get_data_file, get_data_path
 
-file_name = "ods031_all_years_edit.csv"
+file_name = "ods031_edit.csv"
 data = get_data_file(file_name = file_name)
 data_selection = data[["Datetime" ,"Measured & Upscaled" ,"Monitored capacity"]]
 
