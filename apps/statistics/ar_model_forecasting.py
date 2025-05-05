@@ -16,10 +16,11 @@ from src.utils.paths import get_pickles_path, get_figures_path
 from src.utils.utils import adjusted_current_time
 
 
-def ar_p_model_forecasting(lag_p):
+def ar_p_model_forecasting():
 
     # loading pickle file of the trained/fitted model
     # ------------------------------------
+    lag_p = 15
     with open(os.path.join(get_pickles_path(),f"ar_p{lag_p}_model_pickle.pkl"),mode='rb') as pkl_file:
         ar_p_model = pickle.load(pkl_file)
 
@@ -45,25 +46,34 @@ def ar_p_model_forecasting(lag_p):
     # ------------------
     forecast_vec = ar_p_model.model_forecasting(initialization_vector=forecast_init_vec, forecast_horizon=96)
 
-    return forecast_vec, last_day_vec
+    fig = forecast_plot(forecast_vec,initial_vec=np.flip(last_day_vec.flatten()))
+    #plt.show()
+    plt.savefig(os.path.join(get_figures_path(),
+    f"ar_p_{lag_p}_forecast_{current_time.year}_{current_time.month}_{current_time.day}_{current_time.hour}_{current_time.minute}.svg"))
+
+    # reverted quick implementation:
+    # forecast_vec = ar_p_model.model_forecasting(initialization_vector=forecast_init_vec, forecast_horizon=96)
+    # return forecast_vec, last_day_vec
 
 
 if __name__ == "__main__":
+    ar_p_model_forecasting()
 
-    forecast_vec_15, last_day_vec = ar_p_model_forecasting(lag_p=15)
-    forecast_vec_48 = ar_p_model_forecasting(lag_p=48)[0]
-    forecast_vec_96 = ar_p_model_forecasting(lag_p=96)[0]
-
-    # fig = forecast_plot(forecast_vec,initial_vec=np.flip(last_day_vec.flatten()))
-    # plt.show()
+    # reverted quick implementation:
+    # forecast_vec_15, last_day_vec = ar_p_model_forecasting(lag_p=15)
+    # forecast_vec_48 = ar_p_model_forecasting(lag_p=48)[0]
+    # forecast_vec_96 = ar_p_model_forecasting(lag_p=96)[0]
+    #
+    # # fig = forecast_plot(forecast_vec,initial_vec=np.flip(last_day_vec.flatten()))
+    # # plt.show()
+    # # plt.savefig(os.path.join(get_figures_path(),
+    # # f"ar_p_{lag_p}_forecast_{current_time.year}_{current_time.month}_{current_time.day}_{current_time.hour}_{current_time.minute}.svg"))
+    #
+    # fig = forecast_plot_three_models(forecast_vec_15,forecast_vec_48,forecast_vec_96,initial_vec=np.flip(last_day_vec.flatten()))
+    # #plt.show()
+    # current_time = adjusted_current_time()[1]
     # plt.savefig(os.path.join(get_figures_path(),
-    # f"ar_p_{lag_p}_forecast_{current_time.year}_{current_time.month}_{current_time.day}_{current_time.hour}_{current_time.minute}.svg"))
-
-    fig = forecast_plot_three_models(forecast_vec_15,forecast_vec_48,forecast_vec_96,initial_vec=np.flip(last_day_vec.flatten()))
-    #plt.show()
-    current_time = adjusted_current_time()[1]
-    plt.savefig(os.path.join(get_figures_path(),
-    f"three_ar_p_forecasts_{current_time.year}_{current_time.month}_{current_time.day}_{current_time.hour}_{current_time.minute}.svg"))
-
+    # f"three_ar_p_forecasts_{current_time.year}_{current_time.month}_{current_time.day}_{current_time.hour}_{current_time.minute}.svg"))
+    #
 
 
