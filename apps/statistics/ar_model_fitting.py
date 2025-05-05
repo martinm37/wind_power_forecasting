@@ -25,7 +25,7 @@ data_df = pd.DataFrame(data=data, columns=col_names)
 
 # initialization of the model class
 # --------------------------------
-lag_p = 15
+lag_p = 96
 ar_p_model = AutoRegressiveModel(lag_order_p=lag_p)
 
 # model fitting
@@ -46,16 +46,18 @@ with open(os.path.join(get_pickles_path(),f"ar_p{lag_p}_model_pickle.pkl"),mode=
 
 # model validation
 # ------------------
-fig = original_fitted_comparison_plot(original_vec = fitting_solution.Y_mat, fitted_vec = fitting_solution.Y_mat_fitted)
-plt.show()
-
-fig = error_plot(error_vec = fitting_solution.errors_vector)
-plt.show()
+# fig = original_fitted_comparison_plot(original_vec = fitting_solution.Y_mat, fitted_vec = fitting_solution.Y_mat_fitted)
+# plt.show()
+#
+# fig = error_plot(error_vec = fitting_solution.errors_vector)
+# plt.show()
 
 error_acf = acf_comp(y_vec = fitting_solution.errors_vector, total_lag_k = 4*24*30*12*10)
 fig  = acf_plot(acf_vec = error_acf, time_length = len(fitting_solution.errors_vector))
 plt.show()
 
+# TODO: somehow save figures that are clipped, so that the red lines are separate,
+#  right now nothing is properly visible
 
 # print("eyyoo")
 

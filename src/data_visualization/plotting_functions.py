@@ -131,6 +131,31 @@ def forecast_plot(forecast_vec,initial_vec):
 
     return fig
 
+def forecast_plot_three_models(forecast_vec_15,forecast_vec_48,forecast_vec_96,initial_vec):
+
+    fig, ax = plt.subplots()
+
+    fig.suptitle(f"Forecast plot")
+
+    full_axis_vec = np.arange(0, 2 * 96)
+    init_range = full_axis_vec[:-96]
+    forecast_range = full_axis_vec[96:]
+
+    zeros_vec = np.zeros(2*96)
+
+    ax.plot(full_axis_vec, zeros_vec, "k--")
+    ax.plot(init_range, initial_vec, label = "last day")
+    ax.plot(forecast_range, forecast_vec_15, label = "AR-15 forecast")
+    ax.plot(forecast_range, forecast_vec_48, label="AR-48 forecast")
+    ax.plot(forecast_range, forecast_vec_96, label="AR-96 forecast")
+
+    ax.set_ylabel("wind power [% of maximum]")
+    ax.set_xlabel("time [15 min]")
+
+    ax.legend()
+
+    return fig
+
 def forecast_evaluation_plot(forecast_vec,realised_vec,initial_vec,lag_p):
 
     fig, ax = plt.subplots()
