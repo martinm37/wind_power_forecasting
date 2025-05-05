@@ -4,6 +4,7 @@ python script for fetching up last 100 available data points from Elia -> cca. t
 -> but it seems that data in this dataset is always available only from 22.00 of the previous day, not earlier
 """
 
+import os
 import requests
 import datetime
 import pandas as pd
@@ -12,7 +13,7 @@ import numpy as np
 
 from src.data_download.data_download import quarter_hour_down_rounder
 from src.mysql_query_functions.mysql_query_functions import select_query_for_latest_monitored_capacity, delete_query, \
-    pandas_df_insert_query
+    pandas_df_insert_query, SQLFunctionsWrapper
 
 
 def data_fetch_current_day_function():
@@ -89,7 +90,17 @@ def data_fetch_current_day_function():
         as I do for the normal fetcher
         """
 
-        fetched_monitored_capacity = select_query_for_latest_monitored_capacity()[0][1]
+        select_query = ("""
+                        SELECT datetime, monitored_capacity
+                        FROM wind_power_transformed_tbl
+                        ORDER BY datetime DESC
+                        LIMIT 1
+                        """)
+
+        cursor_object = sql_functions_wrapper.select_query_wrapper(query_text=select_query)
+        fetched_monitored_capacity = cursor_object.fetchall()[0][1]
+
+        #fetched_monitored_capacity = select_query_for_latest_monitored_capacity()[0][1]
         data_df["monitored_capacity"] = fetched_monitored_capacity
 
         # numpy operations
@@ -129,7 +140,18 @@ def data_fetch_current_day_function():
 
 
 if __name__ == "__main__":
-    data_fetch_current_day_function()
+
+    connection_dict = {
+        "user": os.environ["STANDARD_USER_1"],
+        "password": os.environ["STANDARD_USER_1_PASSWORD"],
+        "host": "localhost",
+        "port": 3306,
+        "database": "wind_power_db",
+        "datatable": "wind_power_transformed_tbl"}
+
+    sql_functions_wrapper = SQLFunctionsWrapper(connection_dict = connection_dict)
+
+    data_fetch_current_day_function(sql_functions_wrapper)
 
 
 

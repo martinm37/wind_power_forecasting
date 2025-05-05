@@ -3,10 +3,10 @@
 uploads transformed data into a local MySQL database
 """
 
+import os
 import pandas as pd
 
-
-from src.mysql_query_functions.mysql_query_functions import pandas_df_insert_query, select_query_for_datetime_column
+from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
 from src.utils.paths import get_data_file
 
 file_name = "transformed_dataset.csv"
@@ -24,13 +24,35 @@ data_df = data_df.rename(
                "Rescaled Power" : "rescaled_power"})
 
 
+connection_dict = {
+    "user":os.environ["STANDARD_USER_1"],
+    "password":os.environ["STANDARD_USER_1_PASSWORD"],
+    "host":"localhost",
+    "port":3306,
+    "database":"wind_power_db",
+    "datatable":"wind_power_transformed_tbl"}
+
+sql_functions_wrapper = SQLFunctionsWrapper(connection_dict = connection_dict)
+
+
 # checking which datetimes are already present
-already_present_observations = select_query_for_datetime_column()
+select_query = ("""
+                SELECT datetime
+                FROM wind_power_transformed_tbl
+                ORDER BY datetime DESC
+                """)
+
+cursor_object = sql_functions_wrapper.select_query_wrapper(query_text=select_query)
+already_present_observations = cursor_object.fetchall()
+
+
+#already_present_observations = select_query_for_datetime_column()
 
 if len(already_present_observations) == 0:
     # there are no data yet, this is the first INSERT:
     # inserting the data
-    pandas_df_insert_query(data_df)
+    sql_functions_wrapper.insert_pandas_df_query_wrapper(pandas_df=data_df)
+    #pandas_df_insert_query(data_df)
 
 else:
 
@@ -50,7 +72,8 @@ else:
     df_to_insert = pd.merge(left=data_df, right=difference_df, on="datetime", how="inner")
 
     # inserting the data
-    pandas_df_insert_query(df_to_insert)
+    sql_functions_wrapper.insert_pandas_df_query_wrapper(pandas_df=data_df)
+    #pandas_df_insert_query(df_to_insert)
 
 
     #df_to_insert = data_df.join(difference_df, on="datetime", how="inner")

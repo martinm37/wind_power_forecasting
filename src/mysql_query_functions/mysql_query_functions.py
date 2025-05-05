@@ -5,6 +5,109 @@ import mysql.connector
 from sqlalchemy import create_engine, URL
 from sqlalchemy.exc import SQLAlchemyError
 
+
+class SQLFunctionsWrapper:
+
+    def __init__(self,connection_dict):
+        self.connection_dict = connection_dict
+
+    def insert_update_delete_query_wrapper(self,query_text,query_data):
+
+        """
+        INSERT, UPDATE and DELETE SQL queries into a MySQL DB have all the same structure
+        """
+
+        try:
+            cnx = mysql.connector.connect(user=self.connection_dict["user"],
+                                          password=self.connection_dict["password"],
+                                          host=self.connection_dict["host"],
+                                          port=self.connection_dict["port"],
+                                          database=self.connection_dict["database"])
+
+        except mysql.connector.Error as err:
+            print(err)
+
+        else:
+
+            cursor = cnx.cursor()
+            cursor.execute(query_text, query_data)
+            cnx.commit()
+
+            # exiting
+            cursor.close()
+            cnx.close()
+
+
+    def insert_pandas_df_query_wrapper(self,pandas_df):
+
+        url_object = URL.create(drivername="mysql+mysqlconnector",
+                                username=self.connection_dict["user"],
+                                password=self.connection_dict["password"],
+                                host=self.connection_dict["host"],
+                                port=self.connection_dict["port"],
+                                database=self.connection_dict["database"])
+
+        db_table = self.connection_dict["datatable"]
+
+        engine = create_engine(url_object)
+
+        try:
+            engine.connect()
+            print("connection established successfully")
+        except SQLAlchemyError as err:
+            print(err)
+        else:
+            pandas_df.to_sql(name=db_table, con=engine, if_exists="append", index=False)
+            print("data upload successful")
+
+
+    def select_query_wrapper(self,query_text):
+
+        """
+        returns a cursor object, which contains both fetched data and column names, etc.
+        """
+
+        try:
+            cnx = mysql.connector.connect(user=self.connection_dict["user"],
+                                          password=self.connection_dict["password"],
+                                          host=self.connection_dict["host"],
+                                          port=self.connection_dict["port"],
+                                          database=self.connection_dict["database"])
+
+        except mysql.connector.Error as err:
+            print(err)
+
+        else:
+
+            cursor = cnx.cursor()
+            cursor.execute(query_text)
+
+            return cursor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 connection_dict = {
     "user":os.environ["STANDARD_USER_1"],
     "password":os.environ["STANDARD_USER_1_PASSWORD"],

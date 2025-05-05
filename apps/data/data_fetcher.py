@@ -4,22 +4,21 @@ python script for fetching data from Elia
 - able to be run continuously when run by a cron job through a bash script
 """
 
+import os
 import requests
 import datetime
 import pandas as pd
 
 
 from src.data_download.data_download import quarter_hour_down_rounder
-from src.mysql_query_functions.mysql_query_functions import insert_query_partial, \
-    select_query_for_latest_monitored_capacity, \
-    insert_query_full, update_query, test_for_already_present_full_record, test_for_already_present_monitored_capacity
+from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper, test_for_already_present_full_record, test_for_already_present_monitored_capacity
 
 
 # TODO: implement a logger feature
 # TODO: somehow account for annual summer time changes automatically
 
 
-def data_fetch_function():
+def data_fetch_function(sql_functions_wrapper):
 
     exit_status = "" #will contain which branch got executed
 
@@ -105,8 +104,21 @@ def data_fetch_function():
                 return exit_status
 
             else:
-                insert_query_partial(data_datetime, data_monitoredcapacity)
+
+                insert_query = ("""
+                                INSERT INTO wind_power_transformed_tbl
+                                (datetime, monitored_capacity)
+                                VALUES
+                                (%s, %s);
+                                """)
+
+                query_data = (data_datetime, data_monitoredcapacity)
+
+                sql_functions_wrapper.insert_update_delete_query_wrapper(query_text=insert_query,query_data=query_data)
+
+                #insert_query_partial(data_datetime, data_monitoredcapacity)
                 exit_status = "inserted_partial_data"
+
                 return exit_status
 
 
@@ -123,7 +135,19 @@ def data_fetch_function():
                 return exit_status
 
             else:
-                fetched_data = select_query_for_latest_monitored_capacity()
+
+                select_query = ("""
+                                SELECT datetime, monitored_capacity
+                                FROM wind_power_transformed_tbl
+                                ORDER BY datetime DESC
+                                LIMIT 1
+                                """)
+
+                cursor_object = sql_functions_wrapper.select_query_wrapper(query_text=select_query)
+
+                fetched_data = cursor_object.fetchall()
+
+                #fetched_data = select_query_for_latest_monitored_capacity()
 
                 last_datetime = fetched_data[0][0]
                 last_known_monitoredcapacity = fetched_data[0][1]
@@ -136,14 +160,43 @@ def data_fetch_function():
                  otherwise we insert the whole data, accepting the mismatch"""
 
                 if selected_timeslot_datetime != last_datetime:
+
                     print("There is a datetime mismatch.")
-                    insert_query_full(data_datetime, data_power, last_known_monitoredcapacity, data_rescaled_power)
+
+                    insert_query = ("""
+                                    INSERT INTO wind_power_transformed_tbl
+                                    (datetime, measured_and_upscaled, monitored_capacity, rescaled_power)
+                                    VALUES
+                                    (%s, %s, %s, %s);
+                                    """)
+
+                    query_data = (data_datetime, data_power, data_monitoredcapacity, data_rescaled_power)
+
+                    sql_functions_wrapper.insert_update_delete_query_wrapper(query_text=insert_query,
+                                                                             query_data=query_data)
+
+                    #insert_query_full(data_datetime, data_power, last_known_monitoredcapacity, data_rescaled_power)
+
+
                     exit_status = "inserted_full_data"
                     return exit_status
 
 
                 elif selected_timeslot_datetime == last_datetime:
-                    update_query(data_datetime, data_power, data_rescaled_power)
+
+                    update_query = ("""
+                                    UPDATE wind_power_transformed_tbl
+                                    SET measured_and_upscaled = %s, rescaled_power = %s
+                                    WHERE datetime = %s;
+                                    """)
+
+                    query_data = (data_power, data_rescaled_power, data_datetime)
+
+                    sql_functions_wrapper.insert_update_delete_query_wrapper(query_text=update_query,
+                                                                             query_data=query_data)
+
+                    #update_query(data_datetime, data_power, data_rescaled_power)
+
                     exit_status = "inserted_full_data"
                     return exit_status
 
@@ -167,7 +220,19 @@ def data_fetch_function():
                 data_power = min(max(data_power, 0), data_monitoredcapacity)
                 data_rescaled_power = data_power / data_monitoredcapacity * 100
 
-                insert_query_full(data_datetime, data_power, data_monitoredcapacity, data_rescaled_power)
+                insert_query = ("""
+                                INSERT INTO wind_power_transformed_tbl
+                                (datetime, measured_and_upscaled, monitored_capacity, rescaled_power)
+                                VALUES
+                                (%s, %s, %s, %s);
+                                """)
+
+                query_data = (data_datetime, data_power, data_monitoredcapacity, data_rescaled_power)
+
+                sql_functions_wrapper.insert_update_delete_query_wrapper(query_text=insert_query,
+                                                                         query_data=query_data)
+
+                #insert_query_full(data_datetime, data_power, data_monitoredcapacity, data_rescaled_power)
 
                 exit_status = "inserted_full_data"
                 return exit_status
@@ -175,7 +240,18 @@ def data_fetch_function():
 
 
 if __name__ == "__main__":
-    exit_state = data_fetch_function()
+
+    connection_dict = {
+        "user": os.environ["STANDARD_USER_1"],
+        "password": os.environ["STANDARD_USER_1_PASSWORD"],
+        "host": "localhost",
+        "port": 3306,
+        "database": "wind_power_db",
+        "datatable": "wind_power_transformed_tbl"}
+
+    sql_functions_wrapper = SQLFunctionsWrapper(connection_dict = connection_dict)
+
+    exit_state = data_fetch_function(sql_functions_wrapper)
     print(datetime.datetime.now(),exit_state)
 
 
