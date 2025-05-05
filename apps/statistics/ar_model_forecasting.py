@@ -11,12 +11,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from src.data_visualization.plotting_functions import forecast_plot, forecast_plot_three_models
-from src.mysql_query_functions.mysql_query_functions import select_query_forecast
+from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
 from src.utils.paths import get_pickles_path, get_figures_path
 from src.utils.utils import adjusted_current_time
 
 
-def ar_p_model_forecasting():
+def ar_p_model_forecasting(sql_functions_wrapper):
 
     # loading pickle file of the trained/fitted model
     # ------------------------------------
@@ -36,9 +36,27 @@ def ar_p_model_forecasting():
     #current_time = datetime.datetime(2025,4,19,13,00)
     current_time = adjusted_current_time()[1]
 
+    select_query = ("""
+                    SELECT datetime,rescaled_power
+                    FROM wind_power_transformed_tbl
+                    WHERE datetime <= %s
+                    ORDER BY datetime DESC
+                    LIMIT 96;
+                    """)
 
-    data, col_names = select_query_forecast(current_time)
+    query_data = (current_time,)
+    # if there is just a single param, it has to be like (.,) !!!!
+
+    cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(query_text=select_query,
+                                                                           query_data=query_data)
+
+    data = cursor_object.fetchall()
+    col_names = cursor_object.column_names
+
+    #data, col_names = select_query_forecast(current_time)
+
     data_df = pd.DataFrame(data=data, columns=col_names)
+
     last_day_vec = data_df["rescaled_power"].to_numpy().reshape(-1, 1)
     forecast_init_vec = last_day_vec[:lag_p]
 
@@ -57,7 +75,18 @@ def ar_p_model_forecasting():
 
 
 if __name__ == "__main__":
-    ar_p_model_forecasting()
+
+    connection_dict = {
+        "user": os.environ["STANDARD_USER_1"],
+        "password": os.environ["STANDARD_USER_1_PASSWORD"],
+        "host": "localhost",
+        "port": 3306,
+        "database": "wind_power_db",
+        "datatable": "wind_power_transformed_tbl"}
+
+    sql_functions_wrapper = SQLFunctionsWrapper(connection_dict = connection_dict)
+
+    ar_p_model_forecasting(sql_functions_wrapper)
 
     # reverted quick implementation:
     # forecast_vec_15, last_day_vec = ar_p_model_forecasting(lag_p=15)

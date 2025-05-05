@@ -23,7 +23,7 @@ data_df = data_df.rename(
                "Monitored capacity" : "monitored_capacity",
                "Rescaled Power" : "rescaled_power"})
 
-
+# initializing MySQL function wrapper class
 connection_dict = {
     "user":os.environ["STANDARD_USER_1"],
     "password":os.environ["STANDARD_USER_1_PASSWORD"],
@@ -42,9 +42,11 @@ select_query = ("""
                 ORDER BY datetime DESC
                 """)
 
-cursor_object = sql_functions_wrapper.select_query_wrapper(query_text=select_query)
-already_present_observations = cursor_object.fetchall()
+query_data = tuple() # an empty tuple of length 0, for compatibility
 
+cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(query_text=select_query,query_data=query_data)
+
+already_present_observations = cursor_object.fetchall()
 
 #already_present_observations = select_query_for_datetime_column()
 
@@ -72,7 +74,7 @@ else:
     df_to_insert = pd.merge(left=data_df, right=difference_df, on="datetime", how="inner")
 
     # inserting the data
-    sql_functions_wrapper.insert_pandas_df_query_wrapper(pandas_df=data_df)
+    sql_functions_wrapper.insert_pandas_df_query_wrapper(pandas_df=df_to_insert)
     #pandas_df_insert_query(df_to_insert)
 
 

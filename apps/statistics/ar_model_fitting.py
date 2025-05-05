@@ -11,16 +11,42 @@ import matplotlib.pyplot as plt
 
 from src.exploratory_statistics.statistical_functions import acf_comp
 from src.data_visualization.plotting_functions import acf_plot, original_fitted_comparison_plot, error_plot
-from src.mysql_query_functions.mysql_query_functions import select_query_for_whole_data
+from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
 from src.statistical_models.ar_model import AutoRegressiveModel
 from src.utils.paths import get_pickles_path
 
 # data loading
 #-------------------
+
+connection_dict = {
+    "user": os.environ["STANDARD_USER_1"],
+    "password": os.environ["STANDARD_USER_1_PASSWORD"],
+    "host": "localhost",
+    "port": 3306,
+    "database": "wind_power_db",
+    "datatable": "wind_power_transformed_tbl"}
+
+sql_functions_wrapper = SQLFunctionsWrapper(connection_dict=connection_dict)
+
 date_start = datetime.datetime(2014,12,31,23,00)
 date_end = datetime.datetime(2025,4,28,8,00)
 
-data, col_names = select_query_for_whole_data(date_start,date_end)
+select_query = ("""
+                SELECT *
+                FROM wind_power_transformed_tbl
+                WHERE datetime >= %s AND datetime <= %s
+                ORDER BY datetime DESC;
+                """)
+
+query_data = (date_start, date_end)
+
+cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(query_text=select_query,query_data=query_data)
+
+data = cursor_object.fetchall()
+col_names = cursor_object.column_names
+
+#data, col_names = select_query_for_whole_data(date_start,date_end)
+
 data_df = pd.DataFrame(data=data, columns=col_names)
 
 # initialization of the model class

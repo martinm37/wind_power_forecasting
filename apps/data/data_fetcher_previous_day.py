@@ -4,6 +4,7 @@ python script for fetching up last 100 available data points from Elia -> cca. t
 -> but it seems that data in this dataset is always available only from 22.00 of the previous day, not earlier
 """
 
+import os
 import requests
 import datetime
 import pandas as pd
@@ -11,10 +12,10 @@ import numpy as np
 
 
 from src.data_download.data_download import quarter_hour_down_rounder
-from src.mysql_query_functions.mysql_query_functions import delete_query,pandas_df_insert_query
+from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
 
 
-def data_fetch_previous_day_function():
+def data_fetch_previous_day_function(sql_functions_wrapper):
 
     current_time = datetime.datetime.now()
 
@@ -123,15 +124,35 @@ def data_fetch_previous_day_function():
         # --------------------------------------------
 
         # deleting original
-        delete_query(datetime_start, datetime_end)
+        delete_query = ("""
+                        DELETE FROM wind_power_transformed_tbl
+                        WHERE datetime >= %s AND datetime <= %s;
+                        """)
+
+        query_data = (datetime_start, datetime_end)
+
+        sql_functions_wrapper.insert_update_delete_query_wrapper(query_text=delete_query,query_data=query_data)
+        #delete_query(datetime_start, datetime_end)
 
         # inserting new
-        pandas_df_insert_query(data_df)
+        sql_functions_wrapper.insert_pandas_df_query_wrapper(pandas_df=data_df)
+        #pandas_df_insert_query(data_df)
 
 
 
 if __name__ == "__main__":
-    data_fetch_previous_day_function()
+
+    connection_dict = {
+        "user": os.environ["STANDARD_USER_1"],
+        "password": os.environ["STANDARD_USER_1_PASSWORD"],
+        "host": "localhost",
+        "port": 3306,
+        "database": "wind_power_db",
+        "datatable": "wind_power_transformed_tbl"}
+
+    sql_functions_wrapper = SQLFunctionsWrapper(connection_dict = connection_dict)
+
+    data_fetch_previous_day_function(sql_functions_wrapper)
 
 
 

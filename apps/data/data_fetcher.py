@@ -11,14 +11,15 @@ import pandas as pd
 
 
 from src.data_download.data_download import quarter_hour_down_rounder
-from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper, test_for_already_present_full_record, test_for_already_present_monitored_capacity
+from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
+from src.utils.utils import UpToDateDataTester
 
 
 # TODO: implement a logger feature
 # TODO: somehow account for annual summer time changes automatically
 
 
-def data_fetch_function(sql_functions_wrapper):
+def data_fetch_function(sql_functions_wrapper,up_to_date_data_tester):
 
     exit_status = "" #will contain which branch got executed
 
@@ -96,7 +97,8 @@ def data_fetch_function(sql_functions_wrapper):
 
             """ we insert only this value and the datetime into the db for later use"""
 
-            test_result = test_for_already_present_monitored_capacity(selected_timeslot_datetime)
+            test_result = up_to_date_data_tester.test_for_already_present_monitored_capacity(selected_timeslot_datetime)
+            #test_result = test_for_already_present_monitored_capacity(selected_timeslot_datetime)
 
             if test_result:
                 #print("monitored capacity data record already present")
@@ -127,7 +129,8 @@ def data_fetch_function(sql_functions_wrapper):
 
             """here we retrieve last known data_monitoredcapacity value and its date and compute and insert the rest"""
 
-            test_result = test_for_already_present_full_record(selected_timeslot_datetime)
+            test_result = up_to_date_data_tester.test_for_already_present_full_record(selected_timeslot_datetime)
+            #test_result = test_for_already_present_full_record(selected_timeslot_datetime)
 
             if test_result:
                 #print("Full data record already present")
@@ -143,7 +146,10 @@ def data_fetch_function(sql_functions_wrapper):
                                 LIMIT 1
                                 """)
 
-                cursor_object = sql_functions_wrapper.select_query_wrapper(query_text=select_query)
+                query_data = tuple()  # an empty tuple of length 0, for compatibility
+
+                cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(query_text=select_query,
+                                                                                       query_data=query_data)
 
                 fetched_data = cursor_object.fetchall()
 
@@ -207,7 +213,8 @@ def data_fetch_function(sql_functions_wrapper):
 
             """currently (at 2025-04-29) does not happen with real time data"""
 
-            test_result = test_for_already_present_full_record(selected_timeslot_datetime)
+            test_result = up_to_date_data_tester.test_for_already_present_full_record(selected_timeslot_datetime)
+            #test_result = test_for_already_present_full_record(selected_timeslot_datetime)
 
             if test_result:
                 #print("Full data record already present")
@@ -251,7 +258,9 @@ if __name__ == "__main__":
 
     sql_functions_wrapper = SQLFunctionsWrapper(connection_dict = connection_dict)
 
-    exit_state = data_fetch_function(sql_functions_wrapper)
+    up_to_date_data_tester = UpToDateDataTester(sql_functions_wrapper)
+
+    exit_state = data_fetch_function(sql_functions_wrapper,up_to_date_data_tester)
     print(datetime.datetime.now(),exit_state)
 
 
