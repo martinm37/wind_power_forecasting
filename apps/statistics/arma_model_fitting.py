@@ -62,9 +62,9 @@ print("data loaded")
 # model fitting
 #-------------------
 
-lag_p = 15
+lag_p = 12
 lag_d = 0
-lag_q = 15
+lag_q = 12
 
 
 arma_model = ARIMA(endog=rescaled_power_vec,order=(lag_p,lag_d,lag_q))
@@ -77,11 +77,15 @@ print(arma_model_trained.summary())
 with open(os.path.join(get_pickles_path(),f"arma_p{lag_p}_d{lag_d}_q{lag_q}_model_pickle.pkl"),mode='wb') as pkl_file:
     pickle.dump(arma_model_trained,pkl_file,pickle.HIGHEST_PROTOCOL)
 
+"""
+the pickle files of these models are absurdly large, (15,0,15) model had a pickle file of 12GB
+-> last model without errors was (12,0,12)
+"""
+
 print("model class trained and pickled")
 
 # computing error acf
 # -------------------
-aaaa =  arma_model_trained.fittedvalues
 error_vector = rescaled_power_vec - arma_model_trained.fittedvalues.reshape(-1,1)
 
 error_acf = acf_comp(y_vec = error_vector, total_lag_k = 4*24*30*12*5)
