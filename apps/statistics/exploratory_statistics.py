@@ -67,6 +67,13 @@ rescaled_power_vec = data["Rescaled Power"].to_numpy().reshape(-1,1)
 rescaled_power_vec: newest value is on the top
 """
 
+# plotting the histogram of the data
+plt.hist(rescaled_power_vec,bins=500,color="tab:blue")
+plt.xlabel("relative power [% of max power]")
+plt.ylabel("occurrence count")
+plt.title("distribution of offshore wind power data")
+plt.show()
+
 # autocorrelation test statistic
 
 autocorrelation_function_vec = acf_comp(y_vec=rescaled_power_vec, total_lag_k = 4*24*1)

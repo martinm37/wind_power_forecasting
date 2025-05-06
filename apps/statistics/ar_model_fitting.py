@@ -78,9 +78,19 @@ with open(os.path.join(get_pickles_path(),f"ar_p{lag_p}_model_pickle.pkl"),mode=
 # fig = error_plot(error_vec = fitting_solution.errors_vector)
 # plt.show()
 
-error_acf = acf_comp(y_vec = fitting_solution.errors_vector, total_lag_k = 4*24*30*12*10)
+# plotting the histogram of errors
+plt.hist(rescaled_power_vec,bins=500,color="tab:blue")
+plt.xlabel("error")
+plt.ylabel("occurrence count")
+plt.title(f"distribution of errors from AR({lag_p}) model")
+plt.show()
+
+
+error_acf = acf_comp(y_vec = fitting_solution.errors_vector, total_lag_k = 4*24*30*12*8)
 fig  = acf_plot(acf_vec = error_acf, time_length = len(fitting_solution.errors_vector))
 plt.show()
+
+
 
 # TODO: somehow save figures that are clipped, so that the red lines are separate,
 #  right now nothing is properly visible
