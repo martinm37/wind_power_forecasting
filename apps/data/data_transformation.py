@@ -6,6 +6,7 @@ transforms historical wind power production data obtained from a .csv file
 import os
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 from src.utils.paths import get_data_file, get_data_path
@@ -35,6 +36,12 @@ power_vec_bounded = np.maximum(power_vec,np.zeros(len(power_vec))) #.reshape(-1,
 # creating the vector of relative power
 capacity_vec = data_selection["Monitored capacity"].to_numpy()
 rescaled_power_vec = power_vec / capacity_vec * 100
+
+plt.hist(rescaled_power_vec,bins=500,color="tab:blue")
+# plt.xlabel("error")
+# plt.ylabel("occurrence count")
+# plt.title(f"distribution of errors from AR({lag_p}) model")
+plt.show()
 
 # bounding relative power vector - there are values below 0 and above 100
 rescaled_power_vec_lower_bounded = np.maximum(rescaled_power_vec,np.zeros(len(power_vec))) #.reshape(-1,1)
