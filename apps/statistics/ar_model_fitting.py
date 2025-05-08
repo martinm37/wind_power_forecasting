@@ -9,11 +9,23 @@ import pickle
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.exploratory_statistics.statistical_functions import acf_comp
-from src.data_visualization.plotting_functions import acf_plot, original_fitted_comparison_plot, error_plot
+from src.exploratory_statistics.statistical_functions import acf_comp, pacf_comp
+from src.data_visualization.plotting_functions import acf_plot, original_fitted_comparison_plot, error_plot, pacf_plot
 from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
 from src.statistical_models.ar_model import AutoRegressiveModel
 from src.utils.paths import get_pickles_path
+
+
+
+#TODO:
+# create the assessment of model prediction capability
+# possible design:
+# train the model on 2015-2023, test the model on 2024 - unseen data
+# choose N datetimes from 2024 randomly
+# for each n in N take initialization vector before it (<) and realization after it (>=),
+# create forecast on the realisation part, and compute the forecast errors
+# then compute the average of these
+# make N at least 1000
 
 # data loading
 #-------------------
@@ -78,8 +90,20 @@ with open(os.path.join(get_pickles_path(),f"ar_p{lag_p}_model_pickle.pkl"),mode=
 # fig = error_plot(error_vec = fitting_solution.errors_vector)
 # plt.show()
 
-error_acf = acf_comp(y_vec = fitting_solution.errors_vector, total_lag_k = 4*24*30*12*10)
+# plotting the histogram of errors
+plt.hist(rescaled_power_vec,bins=500,color="tab:blue")
+plt.xlabel("error")
+plt.ylabel("occurrence count")
+plt.title(f"distribution of errors from AR({lag_p}) model")
+plt.show()
+
+
+error_acf = acf_comp(y_vec = fitting_solution.errors_vector, total_lag_k = 4*24*30*12*8)
 fig  = acf_plot(acf_vec = error_acf, time_length = len(fitting_solution.errors_vector))
+plt.show()
+
+error_pacf = pacf_comp(y_vec = fitting_solution.errors_vector, total_lag_p = 4*24*1*2)
+fig = pacf_plot(pacf_vec = error_pacf,time_length = len(rescaled_power_vec))
 plt.show()
 
 # TODO: somehow save figures that are clipped, so that the red lines are separate,
