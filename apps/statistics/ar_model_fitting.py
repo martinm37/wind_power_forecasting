@@ -13,7 +13,7 @@ from src.exploratory_statistics.statistical_functions import acf_comp, pacf_comp
 from src.data_visualization.plotting_functions import acf_plot, original_fitted_comparison_plot, error_plot, pacf_plot
 from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
 from src.statistical_models.ar_model import AutoRegressiveModel
-from src.utils.paths import get_pickles_path
+from src.utils.paths import get_model_files_path
 
 
 
@@ -74,7 +74,7 @@ fitting_solution = ar_p_model.model_fitting(data_vector=rescaled_power_vec)
 # exporting to a pickle format
 # ----------------------------
 
-with open(os.path.join(get_pickles_path(),f"ar_p{lag_p}_model_pickle.pkl"),mode='wb') as pkl_file:
+with open(os.path.join(get_model_files_path(), f"ar_p{lag_p}_model_pickle.pkl"), mode='wb') as pkl_file:
     pickle.dump(ar_p_model,pkl_file,pickle.HIGHEST_PROTOCOL)
 
 # 'wb' mode means "Open the file for writing in binary format.

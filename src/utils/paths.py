@@ -13,8 +13,8 @@ def get_data_path():
 def get_log_files_path():
     return os.path.join(get_root_path(), "log_files")
 
-def get_pickles_path():
-    return os.path.join(get_root_path(), "pickle_files")
+def get_model_files_path():
+    return os.path.join(get_root_path(), "model_files")
 
 def get_figures_path():
     return os.path.join(get_root_path(), "figures")

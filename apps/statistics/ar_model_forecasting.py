@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 from src.data_visualization.plotting_functions import forecast_plot, forecast_plot_three_models
 from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
-from src.utils.paths import get_pickles_path, get_figures_path
+from src.utils.paths import get_model_files_path, get_figures_path
 from src.utils.utils import adjusted_current_time
 
 
@@ -50,7 +50,7 @@ def ar_p_model_forecasting(sql_functions_wrapper,lag_p):
 
     # loading pickle file of the trained/fitted model
     # ----------------------------------------------
-    with open(os.path.join(get_pickles_path(),f"ar_p{lag_p}_model_pickle.pkl"),mode='rb') as pkl_file:
+    with open(os.path.join(get_model_files_path(), f"ar_p{lag_p}_model_pickle.pkl"), mode='rb') as pkl_file:
         ar_p_model = pickle.load(pkl_file)
 
     # 'rb' model means "Open the file for reading in binary format.

@@ -15,7 +15,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from src.data_visualization.plotting_functions import acf_plot
 from src.exploratory_statistics.statistical_functions import acf_comp
 from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
-from src.utils.paths import get_pickles_path, get_figures_path
+from src.utils.paths import get_model_files_path, get_figures_path
 
 time_start = time.time()
 
@@ -74,7 +74,7 @@ print(arma_model_trained.summary())
 # exporting to a pickle format
 # ----------------------------
 
-with open(os.path.join(get_pickles_path(),f"arma_p{lag_p}_d{lag_d}_q{lag_q}_model_pickle.pkl"),mode='wb') as pkl_file:
+with open(os.path.join(get_model_files_path(), f"arma_p{lag_p}_d{lag_d}_q{lag_q}_model_pickle.pkl"), mode='wb') as pkl_file:
     pickle.dump(arma_model_trained,pkl_file,pickle.HIGHEST_PROTOCOL)
 
 """
