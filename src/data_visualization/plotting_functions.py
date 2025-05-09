@@ -219,3 +219,45 @@ def forecast_comparison_plot(forecast_vec_1,forecast_vec_2,realised_vec,initial_
 #     ax.legend()
 #
 #     return fig
+
+
+def error_metric_plot(metric_vec,metric_name,sample_size,lag_p):
+
+    fig, ax = plt.subplots()
+
+    fig.suptitle(f"AR({lag_p}) model, plot of {metric_name}, testing set size = {sample_size}")
+
+    axis_vec = np.arange(1,96+1)
+
+    ax.plot(axis_vec, metric_vec, color="tab:red")
+
+
+    ax.set_ylabel(f"{metric_name}")
+    ax.set_xlabel("forecast horizon [15 min]")
+    #
+    # ax.legend()
+
+    return fig
+
+def error_metric_plot3(metric_vec1,
+                       metric_vec2,
+                       metric_vec3,
+                       metric_name,sample_size):
+
+    fig, ax = plt.subplots()
+
+    fig.suptitle(f"Comparison of AR models, plot of {metric_name}, testing set size = {sample_size}")
+
+    axis_vec = np.arange(1,96+1)
+
+    ax.plot(axis_vec, metric_vec1, label="AR(15)")
+    ax.plot(axis_vec, metric_vec2, label="AR(48)")
+    ax.plot(axis_vec, metric_vec3, label="AR(96)")
+
+
+    ax.set_ylabel(f"{metric_name}")
+    ax.set_xlabel("forecast horizon [15 min]")
+    #
+    ax.legend()
+
+    return fig
