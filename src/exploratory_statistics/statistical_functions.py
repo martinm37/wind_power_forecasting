@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import datetime
+import time
 
 
 from src.utils.paths import get_data_file
@@ -69,6 +70,8 @@ def pacf_comp(y_vec,total_lag_p):
     computes the partial autocorrelation function
     """
 
+    t0 = time.time()
+
     time_length = len(y_vec)
 
     #y_mean = np.sum(y_vec) / time_length
@@ -76,12 +79,24 @@ def pacf_comp(y_vec,total_lag_p):
 
     pacf_vec = np.zeros(total_lag_p).reshape(-1, 1)
 
+    time_start = time.time()
+
     for i in range(len(pacf_vec)):
-        print(f"computing lag {i+1} of {len(pacf_vec)}")
+
+        #print(f"computing lag {i+1} of {len(pacf_vec)}")
 
         beta_vec_i = pacf_ar_p_fit(y_vec = y_vec,lag_p = i+1) # lag starts from 1
 
         pacf_vec[i] = beta_vec_i[-1]
+
+        time_end = time.time()
+        elap_time = time_end - time_start
+        print(f"computed lag {i+1} of {len(pacf_vec)}, elapsed time: {round(elap_time, 2)} sec, {round(elap_time / 60, 2)} min")
+        time_start = time.time()
+
+    t1 = time.time()
+    print(f"Computation finished. Total elapsed time: {round((t1-t0), 2)} sec, {round((t1-t0)/ 60, 2)} min")
+
 
     return pacf_vec
 

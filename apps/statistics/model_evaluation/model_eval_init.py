@@ -18,8 +18,8 @@ from src.utils.paths import get_model_files_path
 test_split_datetime = datetime.datetime(2023,1,1,0,0,0)
 sample_end_datetime = datetime.datetime(2024,1,1,0,0,0)
 
-lag_p = 96
-test_subset_size = 10000
+lag_p = 192
+test_subset_size = 5000
 
 
 
@@ -92,7 +92,7 @@ test_data_df = pd.DataFrame(data=test_data, columns=col_names)
 
 # selecting testing subset
 # -------------------------
-lag_p_set = 96 # maximal possible, standardizing between models
+lag_p_set = int(96*3) # maximal possible, standardizing between models
 horizon = 96
 test_set_len = len(test_data_df)
 

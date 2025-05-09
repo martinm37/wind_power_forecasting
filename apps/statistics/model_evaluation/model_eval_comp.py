@@ -13,11 +13,17 @@ import numpy as np
 from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
 from src.utils.paths import get_model_files_path
 
+# TODO:
+#  Do a complete rework of the SQL accessing:
+#  Create an object containing both initialization and realization vectors, by requesting these from DB _once_,
+#  and make the for loop access this, instead of repeatedly accessing DB every time it is run, for every model.
+#  This way it can be much more easily reused.
+
 time_start = time.time()
 
-lag_p = 48
+lag_p = 96
 horizon = 96
-test_subset_size = 10000
+test_subset_size = 5000
 
 print(f"start of evaluating AR({lag_p}) model on subset {test_subset_size}")
 
@@ -87,8 +93,8 @@ for i in range(test_subset_size):
                                 SELECT datetime, rescaled_power
                                 FROM wind_power_transformed_tbl
                                 WHERE datetime >= %s 
-                                ORDER BY datetime
-                                LIMIT {horizon}
+                                ORDER BY datetime ASC
+                                LIMIT {horizon};
                                 """)
 
     realized_vec_select_query_data = (datetime_i,)

@@ -90,7 +90,7 @@ plt.show()
 
 # partial autocorrelation test statistic
 
-pacf_vec = pacf_comp(y_vec = rescaled_power_vec, total_lag_p = 4*24*1*2)
+pacf_vec = pacf_comp(y_vec = rescaled_power_vec, total_lag_p = 4*24*1*1)
 
 
 fig = pacf_plot(pacf_vec = pacf_vec,time_length = len(rescaled_power_vec))
