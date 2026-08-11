@@ -1,0 +1,47 @@
+[project]
+name = "wind-power-forecasting"
+version = "0.1.0"
+description = "Code for real time forecasting of wind power."
+readme = "README.md"
+authors = [
+    { name = "MartinTalan", email = "martin.talan.dev@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "certifi==2025.1.31",
+    "charset-normalizer==3.4.1",
+    "contourpy==1.3.1",
+    "cycler==0.12.1",
+    "fonttools==4.56.0",
+    "greenlet==3.1.1",
+    "idna==3.10",
+    "kiwisolver==1.4.8",
+    "matplotlib==3.10.1",
+    "mysql-connector-python==9.2.0",
+    "numpy==2.2.3",
+    "packaging==24.2",
+    "pandas==2.2.3",
+    "patsy==1.0.1",
+    "pillow==11.1.0",
+    "pyparsing==3.2.1",
+    "pyqt5==5.15.11",
+    "pyqt5-qt5==5.15.16",
+    "pyqt5-sip==12.17.0",
+    "python-dateutil==2.9.0.post0",
+    "pytz==2025.1",
+    "requests==2.32.3",
+    "scipy==1.15.2",
+    "six==1.17.0",
+    "sqlalchemy==2.0.40",
+    "statsmodels==0.14.4",
+    "typing-extensions==4.13.2",
+    "tzdata==2025.1",
+    "urllib3==2.3.0",
+]
+
+[project.scripts]
+wind-power-forecasting = "wind_power_forecasting:main"
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
