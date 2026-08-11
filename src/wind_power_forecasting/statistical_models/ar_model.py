@@ -8,12 +8,19 @@ from src.wind_power_forecasting.utils.utils import StatisticalModelSolution
 
 
 class AutoRegressiveModel:
-    def __init__(self, lag_order_p):
+    def __init__(self, lag_order_p: int):
+
+        """
+        Attributes
+        ----------
+        lag_order_p: lag order of the autoregressive model
+        model_fit_solution: holds the results of the model_fitting method
+        """
 
         self.lag_order_p = lag_order_p
-        self.model_fit_solution = None  # holds the results of the model_fitting method
+        self.model_fit_solution: StatisticalModelSolution | None = None
 
-    def model_fitting(self, data_vector):
+    def model_fitting(self, data_vector) -> StatisticalModelSolution:
         """
         computes the AR(p) model
 
@@ -60,6 +67,9 @@ class AutoRegressiveModel:
         initialization_vector is one element shorter than self.beta_vec,
         to account for the intercept term
         """
+
+        if not isinstance(self.model_fit_solution, StatisticalModelSolution):
+            raise TypeError("We are forecasting with the model, but it has not been fitted!")
 
         forecast_vec = np.zeros(forecast_horizon)
 
