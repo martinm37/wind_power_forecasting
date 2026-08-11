@@ -1,19 +1,24 @@
-
 """
 script for various types of plots for the selected time window
 """
 
-import os
 import datetime
-import mysql.connector
-from mysql.connector import errorcode
-import pandas as pd
+import os
+
 import matplotlib.pyplot as plt
+import mysql.connector
+import pandas as pd
+from mysql.connector import errorcode
 
-from src.wind_power_forecasting.data_visualization.data_visualization import wind_series_plotter, wind_series_plotter_rescaled, wind_series_plotter_with_capacity
-from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
+from src.wind_power_forecasting.data_visualization.data_visualization import (
+    wind_series_plotter,
+    wind_series_plotter_rescaled,
+    wind_series_plotter_with_capacity,
+)
+from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import (
+    SQLFunctionsWrapper,
+)
 from src.wind_power_forecasting.utils.paths import get_data_file
-
 
 # selecting plotting window
 # --------------------------
@@ -29,42 +34,44 @@ connection_dict = {
     "host": "localhost",
     "port": 3306,
     "database": "wind_power_db",
-    "datatable": "wind_power_transformed_tbl"}
+    "datatable": "wind_power_transformed_tbl",
+}
 
 sql_functions_wrapper = SQLFunctionsWrapper(connection_dict=connection_dict)
 
-select_query = ("""
+select_query = """
                 SELECT * 
                 FROM wind_power_transformed_tbl
                 WHERE datetime >= %s AND datetime < %s;
-                """)
+                """
 
-query_data = (date_from,date_to)
+query_data = (date_from, date_to)
 
-cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(query_text=select_query,
-                                                                       query_data=query_data)
+cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(
+    query_text=select_query, query_data=query_data
+)
 
 fetched_data = cursor_object.fetchall()
 col_names = cursor_object.column_names
 
 
-data = pd.DataFrame(data = fetched_data, columns = col_names)
-
-
+data = pd.DataFrame(data=fetched_data, columns=col_names)
 
 
 # start of plotting section
 # --------------------------
 
-data = data.sort_values(by="datetime",ascending=False)
+data = data.sort_values(by="datetime", ascending=False)
 
 # renaming to match names in plotting functions
 data = data.rename(
-    columns = {"datetime" : "Datetime",
-               "measured_and_upscaled" : "Measured & Upscaled",
-               "monitored_capacity" : "Monitored capacity",
-               "rescaled_power" : "Rescaled Power"})
-
+    columns={
+        "datetime": "Datetime",
+        "measured_and_upscaled": "Measured & Upscaled",
+        "monitored_capacity": "Monitored capacity",
+        "rescaled_power": "Rescaled Power",
+    }
+)
 
 
 # # converting time columns and removing the time offset
@@ -151,12 +158,13 @@ data_half_yearly = data_half_yearly.sort_values(by="Datetime", ascending=False)
 # plt.show()
 
 
-
 # plotting - rescaled series
 # ----------------------
 
 data_select = data[(data["Datetime"] >= date_from) & (data["Datetime"] < date_to)]
-fig = wind_series_plotter(data_select["Datetime"],data_select["Rescaled Power"], frequency = "15min")
+fig = wind_series_plotter(
+    data_select["Datetime"], data_select["Rescaled Power"], frequency="15min"
+)
 plt.show()
 
 # data_select = data_weekly[(data_weekly["Datetime"] >= date_from) & (data_weekly["Datetime"] < date_to)]
@@ -174,8 +182,3 @@ plt.show()
 # data_select = data_half_yearly[(data_half_yearly["Datetime"] >= date_from) & (data_half_yearly["Datetime"] < date_to)]
 # fig = wind_series_plotter_rescaled(data_select["Datetime"], data_select["Rescaled Power"], frequency="half yearly")
 # plt.show()
-
-
-
-
-

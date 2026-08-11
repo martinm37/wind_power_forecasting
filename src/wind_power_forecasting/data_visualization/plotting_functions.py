@@ -1,11 +1,9 @@
-
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import pyplot as plt
 
 
 def original_fitted_comparison_plot(original_vec, fitted_vec):
-
     """
     used to make comparison plot of the original time series vector, and the one
     which was made by fitting the values from a model
@@ -15,7 +13,7 @@ def original_fitted_comparison_plot(original_vec, fitted_vec):
 
     fig.suptitle(f"original vs fitted vectors")
 
-    axis_vec = np.arange(0,len(original_vec))
+    axis_vec = np.arange(0, len(original_vec))
     zeros_vec = np.zeros(len(original_vec))
 
     ax.plot(axis_vec, original_vec)
@@ -29,7 +27,6 @@ def original_fitted_comparison_plot(original_vec, fitted_vec):
 
 
 def error_plot(error_vec):
-
     """
     plots the errors from a model (AR) fit
     """
@@ -38,7 +35,7 @@ def error_plot(error_vec):
 
     fig.suptitle(f"errors of the model")
 
-    axis_vec = np.arange(0,len(error_vec))
+    axis_vec = np.arange(0, len(error_vec))
     zeros_vec = np.zeros(len(error_vec))
 
     ax.plot(axis_vec, error_vec)
@@ -49,14 +46,15 @@ def error_plot(error_vec):
 
     return fig
 
-def acf_plot(acf_vec,time_length):
+
+def acf_plot(acf_vec, time_length):
 
     lag_vec = np.arange(1, len(acf_vec) + 1)
     zeros_vec = np.zeros(len(acf_vec))
 
     sig_val = 1.96 * 1 / np.sqrt(time_length)
 
-    #print(sig_val)
+    # print(sig_val)
     # top_sig_vec = np.ones(len(acf_vec)) * 1.96 / 10
     # bottom_sig_vec = np.ones(len(acf_vec)) * -1.96 / 10
 
@@ -79,14 +77,14 @@ def acf_plot(acf_vec,time_length):
     return fig
 
 
-def pacf_plot(pacf_vec,time_length):
+def pacf_plot(pacf_vec, time_length):
 
     lag_vec = np.arange(1, len(pacf_vec) + 1)
     zeros_vec = np.zeros(len(pacf_vec))
 
     sig_val = 1.96 * 1 / np.sqrt(time_length)
 
-    #print(sig_val)
+    # print(sig_val)
     # top_sig_vec = np.ones(len(acf_vec)) * 1.96 / 10
     # bottom_sig_vec = np.ones(len(acf_vec)) * -1.96 / 10
 
@@ -108,7 +106,8 @@ def pacf_plot(pacf_vec,time_length):
 
     return fig
 
-def forecast_plot(forecast_vec,initial_vec):
+
+def forecast_plot(forecast_vec, initial_vec):
 
     fig, ax = plt.subplots()
 
@@ -118,11 +117,11 @@ def forecast_plot(forecast_vec,initial_vec):
     init_range = full_axis_vec[:-96]
     forecast_range = full_axis_vec[96:]
 
-    zeros_vec = np.zeros(2*96)
+    zeros_vec = np.zeros(2 * 96)
 
     ax.plot(full_axis_vec, zeros_vec, "k--")
-    ax.plot(init_range, initial_vec, label = "last day")
-    ax.plot(forecast_range, forecast_vec, label = "forecast")
+    ax.plot(init_range, initial_vec, label="last day")
+    ax.plot(forecast_range, forecast_vec, label="forecast")
 
     ax.set_ylabel("wind power [% of maximum]")
     ax.set_xlabel("time [15 min]")
@@ -131,7 +130,10 @@ def forecast_plot(forecast_vec,initial_vec):
 
     return fig
 
-def forecast_plot_three_models(forecast_vec_15,forecast_vec_48,forecast_vec_96,initial_vec):
+
+def forecast_plot_three_models(
+    forecast_vec_15, forecast_vec_48, forecast_vec_96, initial_vec
+):
 
     fig, ax = plt.subplots()
 
@@ -141,11 +143,11 @@ def forecast_plot_three_models(forecast_vec_15,forecast_vec_48,forecast_vec_96,i
     init_range = full_axis_vec[:-96]
     forecast_range = full_axis_vec[96:]
 
-    zeros_vec = np.zeros(2*96)
+    zeros_vec = np.zeros(2 * 96)
 
     ax.plot(full_axis_vec, zeros_vec, "k--")
-    ax.plot(init_range, initial_vec, label = "last day")
-    ax.plot(forecast_range, forecast_vec_15, label = "AR-15 forecast")
+    ax.plot(init_range, initial_vec, label="last day")
+    ax.plot(forecast_range, forecast_vec_15, label="AR-15 forecast")
     ax.plot(forecast_range, forecast_vec_48, label="AR-48 forecast")
     ax.plot(forecast_range, forecast_vec_96, label="AR-96 forecast")
 
@@ -156,7 +158,8 @@ def forecast_plot_three_models(forecast_vec_15,forecast_vec_48,forecast_vec_96,i
 
     return fig
 
-def forecast_evaluation_plot(forecast_vec,realised_vec,initial_vec,lag_p):
+
+def forecast_evaluation_plot(forecast_vec, realised_vec, initial_vec, lag_p):
 
     fig, ax = plt.subplots()
 
@@ -164,21 +167,23 @@ def forecast_evaluation_plot(forecast_vec,realised_vec,initial_vec,lag_p):
 
     full_axis_vec = np.arange(0, len(initial_vec))
     init_range = full_axis_vec[:-96]
-    forecast_range = full_axis_vec[len(initial_vec)-96:]
+    forecast_range = full_axis_vec[len(initial_vec) - 96 :]
 
     zeros_vec = np.zeros(len(initial_vec))
 
     ax.plot(full_axis_vec, zeros_vec, "k--")
     ax.plot(init_range, initial_vec[:-96], "k")
-    ax.plot(forecast_range, forecast_vec, label = "forecast")
-    ax.plot(forecast_range, realised_vec, label = "realization")
+    ax.plot(forecast_range, forecast_vec, label="forecast")
+    ax.plot(forecast_range, realised_vec, label="realization")
 
     ax.legend()
 
     return fig
 
 
-def forecast_comparison_plot(forecast_vec_1,forecast_vec_2,realised_vec,initial_vec,lag_p):
+def forecast_comparison_plot(
+    forecast_vec_1, forecast_vec_2, realised_vec, initial_vec, lag_p
+):
 
     fig, ax = plt.subplots()
 
@@ -190,19 +195,20 @@ def forecast_comparison_plot(forecast_vec_1,forecast_vec_2,realised_vec,initial_
 
     full_axis_vec = np.arange(0, len_1)
     init_range = full_axis_vec[:-96]
-    forecast_range = full_axis_vec[len_1-96:]
+    forecast_range = full_axis_vec[len_1 - 96 :]
 
     zeros_vec = np.zeros(len_1)
 
     ax.plot(full_axis_vec, zeros_vec, "k--")
     ax.plot(init_range, initial_vec[:96], "k")
-    ax.plot(forecast_range, forecast_vec_1, label = "my forecast")
+    ax.plot(forecast_range, forecast_vec_1, label="my forecast")
     ax.plot(forecast_range, forecast_vec_2, label="statsmodels forecast")
-    ax.plot(forecast_range, realised_vec, label = "realization")
+    ax.plot(forecast_range, realised_vec, label="realization")
 
     ax.legend()
 
     return fig
+
 
 # def forecast_evaluation_plot(forecast_vec,realised_vec):
 #

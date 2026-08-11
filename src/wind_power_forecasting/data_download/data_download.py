@@ -1,6 +1,3 @@
-
-
-
 def quarter_hour_down_rounder(original_time):
 
     time_minute = original_time.minute
@@ -16,6 +13,5 @@ def quarter_hour_down_rounder(original_time):
     else:
         raise "Invalid time error"
 
-    new_time = original_time.replace(minute=new_minute,second=0)
+    new_time = original_time.replace(minute=new_minute, second=0)
     return new_time
-
