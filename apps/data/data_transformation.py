@@ -9,7 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-from src.utils.paths import get_data_file, get_data_path
+from src.wind_power_forecasting.utils.paths import get_data_file, get_data_path
 
 file_name = "ods031_edit.csv"
 data = get_data_file(file_name = file_name)

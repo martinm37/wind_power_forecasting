@@ -11,10 +11,10 @@ import matplotlib.pyplot as plt
 
 from apps.data.data_fetcher import data_fetch_function
 from apps.statistics.ar_model_forecasting import ar_p_model_forecasting
-from src.data_visualization.plotting_functions import forecast_plot, forecast_plot_three_models
-from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
-from src.utils.paths import get_figures_path
-from src.utils.utils import UpToDateDataTester, adjusted_current_time
+from src.wind_power_forecasting.data_visualization.plotting_functions import forecast_plot, forecast_plot_three_models
+from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
+from src.wind_power_forecasting.utils.paths import get_figures_path
+from src.wind_power_forecasting.utils.utils import UpToDateDataTester, adjusted_current_time
 
 # initializing the sql functions wrapper class:
 # --------------------------------------------

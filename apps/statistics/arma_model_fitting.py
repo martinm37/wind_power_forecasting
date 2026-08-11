@@ -12,10 +12,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 
-from src.data_visualization.plotting_functions import acf_plot
-from src.exploratory_statistics.statistical_functions import acf_comp
-from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
-from src.utils.paths import get_model_files_path, get_figures_path
+from src.wind_power_forecasting.data_visualization.plotting_functions import acf_plot
+from src.wind_power_forecasting.exploratory_statistics.statistical_functions import acf_comp
+from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
+from src.wind_power_forecasting.utils.paths import get_model_files_path, get_figures_path
 
 time_start = time.time()
 

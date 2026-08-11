@@ -7,7 +7,7 @@ from mysql.connector import errorcode
 import pandas as pd
 import datetime
 
-from src.utils.paths import get_data_file
+from src.wind_power_forecasting.utils.paths import get_data_file
 
 # preparing data
 file_name = "transformed_dataset.csv"

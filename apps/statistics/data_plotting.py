@@ -10,10 +10,9 @@ from mysql.connector import errorcode
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.data_visualization.data_visualization import wind_series_plotter, wind_series_plotter_rescaled, \
-    wind_series_plotter_with_capacity
-from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
-from src.utils.paths import get_data_file
+from src.wind_power_forecasting.data_visualization.data_visualization import wind_series_plotter, wind_series_plotter_rescaled, wind_series_plotter_with_capacity
+from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
+from src.wind_power_forecasting.utils.paths import get_data_file
 
 
 # selecting plotting window

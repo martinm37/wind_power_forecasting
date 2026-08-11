@@ -11,8 +11,8 @@ import pandas as pd
 import numpy as np
 
 
-from src.data_download.data_download import quarter_hour_down_rounder
-from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
+from src.wind_power_forecasting.data_download.data_download import quarter_hour_down_rounder
+from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
 
 
 def data_fetch_previous_day_function(sql_functions_wrapper):

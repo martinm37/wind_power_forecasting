@@ -6,7 +6,7 @@ miscellaneous util functions and classes
 
 import datetime
 
-from src.data_download.data_download import quarter_hour_down_rounder
+from src.wind_power_forecasting.data_download.data_download import quarter_hour_down_rounder
 
 
 class StatisticalModelSolution:

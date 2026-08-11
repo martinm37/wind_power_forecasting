@@ -4,7 +4,7 @@ import pandas as pd
 import datetime
 
 
-from src.utils.paths import get_data_file
+from src.wind_power_forecasting.utils.paths import get_data_file
 
 
 def acf_comp(y_vec, total_lag_k):

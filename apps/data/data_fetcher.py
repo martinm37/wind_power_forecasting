@@ -10,9 +10,9 @@ import datetime
 import pandas as pd
 
 
-from src.data_download.data_download import quarter_hour_down_rounder
-from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
-from src.utils.utils import UpToDateDataTester
+from src.wind_power_forecasting.data_download.data_download import quarter_hour_down_rounder
+from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
+from src.wind_power_forecasting.utils.utils import UpToDateDataTester
 
 
 # TODO: implement a logger feature

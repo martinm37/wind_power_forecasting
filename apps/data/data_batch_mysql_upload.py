@@ -6,8 +6,8 @@ uploads transformed data into a local MySQL database
 import os
 import pandas as pd
 
-from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
-from src.utils.paths import get_data_file
+from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
+from src.wind_power_forecasting.utils.paths import get_data_file
 
 file_name = "transformed_dataset.csv"
 data_df = get_data_file(file_name = file_name)

@@ -9,11 +9,11 @@ import pickle
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.exploratory_statistics.statistical_functions import acf_comp, pacf_comp
-from src.data_visualization.plotting_functions import acf_plot, original_fitted_comparison_plot, error_plot, pacf_plot
-from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
-from src.statistical_models.ar_model import AutoRegressiveModel
-from src.utils.paths import get_model_files_path
+from src.wind_power_forecasting.exploratory_statistics.statistical_functions import acf_comp, pacf_comp
+from src.wind_power_forecasting.data_visualization.plotting_functions import acf_plot, original_fitted_comparison_plot, error_plot, pacf_plot
+from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
+from src.wind_power_forecasting.statistical_models.ar_model import AutoRegressiveModel
+from src.wind_power_forecasting.utils.paths import get_model_files_path
 
 
 

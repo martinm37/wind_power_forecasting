@@ -10,10 +10,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.data_visualization.plotting_functions import forecast_plot, forecast_plot_three_models
-from src.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
-from src.utils.paths import get_model_files_path, get_figures_path
-from src.utils.utils import adjusted_current_time
+from src.wind_power_forecasting.data_visualization.plotting_functions import forecast_plot, forecast_plot_three_models
+from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import SQLFunctionsWrapper
+from src.wind_power_forecasting.utils.paths import get_model_files_path, get_figures_path
+from src.wind_power_forecasting.utils.utils import adjusted_current_time
 
 
 def ar_p_model_forecasting(sql_functions_wrapper,lag_p):

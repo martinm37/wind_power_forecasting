@@ -5,7 +5,7 @@ holds class for an AR(p) model, with model fitting and forecasting methods
 
 import numpy as np
 
-from src.utils.utils import StatisticalModelSolution
+from src.wind_power_forecasting.utils.utils import StatisticalModelSolution
 
 
 class AutoRegressiveModel:

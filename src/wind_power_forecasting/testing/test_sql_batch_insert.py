@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, URL
 from sqlalchemy.exc import SQLAlchemyError
 import pandas as pd
 
-from src.utils.paths import get_data_file
+from src.wind_power_forecasting.utils.paths import get_data_file
 
 # preparing pandas dataframe
 file_name = "transformed_dataset.csv"
