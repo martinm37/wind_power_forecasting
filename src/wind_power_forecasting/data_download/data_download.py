@@ -1,4 +1,10 @@
-def quarter_hour_down_rounder(original_time):
+from datetime import datetime
+
+
+def quarter_hour_down_rounder(original_time: datetime) -> datetime:
+    """
+    Rounds time down to the nearest quarter.
+    """
 
     time_minute = original_time.minute
 
@@ -11,7 +17,7 @@ def quarter_hour_down_rounder(original_time):
     elif time_minute >= 45 and time_minute < 60:
         new_minute = 45
     else:
-        raise "Invalid time error"
+        raise ValueError(f"Invalid minute detected: {time_minute}.")
 
     new_time = original_time.replace(minute=new_minute, second=0)
     return new_time
