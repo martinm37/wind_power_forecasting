@@ -63,5 +63,5 @@ print(f"min power: {data_selection['Measured & Upscaled'].min()}")
 
 
 data_selection.to_csv(
-    os.path.join(get_data_path(), f"transformed_dataset.csv"), sep=",", index=False
+    os.path.join(get_data_path(), "transformed_dataset.csv"), sep=",", index=False
 )
