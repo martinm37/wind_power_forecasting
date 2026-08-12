@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib import pyplot as plt
 
 
 def original_fitted_comparison_plot(original_vec, fitted_vec):
@@ -11,7 +10,7 @@ def original_fitted_comparison_plot(original_vec, fitted_vec):
 
     fig, ax = plt.subplots()
 
-    fig.suptitle(f"original vs fitted vectors")
+    fig.suptitle("original vs fitted vectors")
 
     axis_vec = np.arange(0, len(original_vec))
     zeros_vec = np.zeros(len(original_vec))
@@ -33,7 +32,7 @@ def error_plot(error_vec):
 
     fig, ax = plt.subplots()
 
-    fig.suptitle(f"errors of the model")
+    fig.suptitle("errors of the model")
 
     axis_vec = np.arange(0, len(error_vec))
     zeros_vec = np.zeros(len(error_vec))
@@ -111,7 +110,7 @@ def forecast_plot(forecast_vec, initial_vec):
 
     fig, ax = plt.subplots()
 
-    fig.suptitle(f"Forecast plot")
+    fig.suptitle("Forecast plot")
 
     full_axis_vec = np.arange(0, 2 * 96)
     init_range = full_axis_vec[:-96]
@@ -137,7 +136,7 @@ def forecast_plot_three_models(
 
     fig, ax = plt.subplots()
 
-    fig.suptitle(f"Forecast plot")
+    fig.suptitle("Forecast plot")
 
     full_axis_vec = np.arange(0, 2 * 96)
     init_range = full_axis_vec[:-96]
@@ -163,7 +162,7 @@ def forecast_evaluation_plot(forecast_vec, realised_vec, initial_vec, lag_p):
 
     fig, ax = plt.subplots()
 
-    fig.suptitle(f"Forecasted vs realized values")
+    fig.suptitle("Forecasted vs realized values")
 
     full_axis_vec = np.arange(0, len(initial_vec))
     init_range = full_axis_vec[:-96]
@@ -189,7 +188,7 @@ def forecast_comparison_plot(
 
     initial_vec = np.flip(initial_vec)
 
-    fig.suptitle(f"Forecasted vs realized values")
+    fig.suptitle("Forecasted vs realized values")
 
     len_1 = 2 * 96
 
