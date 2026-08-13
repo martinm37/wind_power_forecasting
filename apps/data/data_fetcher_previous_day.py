@@ -18,7 +18,7 @@ from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions impo
 )
 
 
-def data_fetch_previous_day_function(sql_functions_wrapper):
+def data_fetch_previous_day_function(sql_functions_wrapper: SQLFunctionsWrapper):
 
     current_time = datetime.datetime.now()
 

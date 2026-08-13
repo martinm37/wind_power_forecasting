@@ -4,7 +4,13 @@ This class has methods which make it easier to make connections to a MySQL datab
 -> their arguments are text and data of SQL queries
 """
 
+from __future__ import annotations
+
+from typing import Any, NamedTuple
+
 import mysql.connector
+from mysql.connector.abstracts import MySQLConnectionAbstract, MySQLCursorAbstract
+from mysql.connector.pooling import PooledMySQLConnection
 from sqlalchemy import URL, create_engine
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -63,9 +69,32 @@ class SQLFunctionsWrapper:
             pandas_df.to_sql(name=db_table, con=engine, if_exists="append", index=False)
             print("data upload successful")
 
-    def select_query_wrapper(self, query_text, query_data):
+    def select_query_wrapper(
+        self, query_text: str, query_data: tuple[Any, ...] | None = None
+    ) -> SelectQueryOutput:
         """
-        returns a cursor object, which contains both fetched data and column names, etc.
+        SELECT query wrapper
+
+        Arguments
+        ---------
+        query_text:
+            Text of the select query
+        query_data:
+            Optional tuple of arguments, to be passed as an inputs to the query text.
+            If provided, it has to contain at least one element.
+
+        Examples
+        --------
+        select_query = '''
+                        SELECT *
+                        FROM wind_power_transformed_tbl
+                        WHERE datetime >= %s AND datetime <= %s
+                        ORDER BY datetime DESC;
+                        '''
+
+        query_data = (date_start, date_end)
+
+        where date_start and date_end are of type datetime.datetime
         """
 
         try:
@@ -78,20 +107,32 @@ class SQLFunctionsWrapper:
             )
 
         except mysql.connector.Error as err:
-            print(err)
+            raise RuntimeError(err)
 
         else:
             cursor = cnx.cursor()
 
-            if len(query_data) == 0:
-                cursor.execute(query_text)
+            if query_data is not None:
+                if len(query_data) == 0:
+                    raise ValueError("query_data has to contain at least one element.")
+                else:
+                    cursor.execute(query_text, query_data)
             else:
-                cursor.execute(query_text, query_data)
+                cursor.execute(query_text)
 
-            # some select queries do not have any query_data, so I do this to have just one method
+            return SelectQueryOutput(cnx, cursor)
 
-            return cnx, cursor
 
-            # Here I have to return _both_ cursor object _and_ the connection cnx, otherwise the cursor object
-            # will not exist when exiting from the function
-            # because of a weak reference -> found the solution on stackoverflow
+class SelectQueryOutput(NamedTuple):
+    """
+    Contains the outputs of SELECT query
+
+    Notes
+    -----
+    Both cursor object, and the cnx object have to be returned
+    from the SELECT query, otherwise the cursor object will not exist when exiting
+    from the function, because of a weak reference -> found the solution on stackoverflow
+    """
+
+    cnx: PooledMySQLConnection | MySQLConnectionAbstract
+    cursor: MySQLCursorAbstract

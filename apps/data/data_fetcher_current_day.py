@@ -18,7 +18,7 @@ from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions impo
 )
 
 
-def data_fetch_current_day_function(sql_functions_wrapper):
+def data_fetch_current_day_function(sql_functions_wrapper: SQLFunctionsWrapper):
 
     current_time = datetime.datetime.now()
 
@@ -106,10 +106,8 @@ def data_fetch_current_day_function(sql_functions_wrapper):
                         LIMIT 1
                         """
 
-        query_data = tuple()  # an empty tuple of length 0, for compatibility
-
         cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(
-            query_text=select_query, query_data=query_data
+            query_text=select_query
         )
         fetched_monitored_capacity = cursor_object.fetchall()[0][1]
 
