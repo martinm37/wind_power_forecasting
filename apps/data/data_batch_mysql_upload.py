@@ -48,11 +48,11 @@ select_query = """
                 ORDER BY datetime DESC
                 """
 
-query_data = tuple()  # an empty tuple of length 0, for compatibility
 
-cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(
-    query_text=select_query, query_data=query_data
+select_query_outputs = sql_functions_wrapper.select_query_wrapper(
+    query_text=select_query,
 )
+cursor_object = select_query_outputs.cursor
 
 already_present_observations = cursor_object.fetchall()
 

@@ -51,9 +51,10 @@ select_query = """
 
 query_data = (date_start, date_end)
 
-cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(
+select_query_outputs = sql_functions_wrapper.select_query_wrapper(
     query_text=select_query, query_data=query_data
 )
+cursor_object = select_query_outputs.cursor
 
 print("database connection established")
 

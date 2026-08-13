@@ -21,7 +21,10 @@ from src.wind_power_forecasting.utils.utils import UpToDateDataTester
 # TODO: somehow account for annual summer time changes automatically
 
 
-def data_fetch_function(sql_functions_wrapper, up_to_date_data_tester):
+def data_fetch_function(
+    sql_functions_wrapper: SQLFunctionsWrapper,
+    up_to_date_data_tester: UpToDateDataTester,
+):
 
     exit_status = ""  # will contain which branch got executed
 
@@ -152,11 +155,10 @@ def data_fetch_function(sql_functions_wrapper, up_to_date_data_tester):
                                 LIMIT 1
                                 """
 
-                query_data = tuple()  # an empty tuple of length 0, for compatibility
-
-                cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(
-                    query_text=select_query, query_data=query_data
+                select_query_outputs = sql_functions_wrapper.select_query_wrapper(
+                    query_text=select_query
                 )
+                cursor_object = select_query_outputs.cursor
 
                 fetched_data = cursor_object.fetchall()
 

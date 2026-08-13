@@ -24,7 +24,7 @@ from src.wind_power_forecasting.utils.paths import (
 from src.wind_power_forecasting.utils.utils import adjusted_current_time
 
 
-def ar_p_model_forecasting(sql_functions_wrapper, lag_p):
+def ar_p_model_forecasting(sql_functions_wrapper: SQLFunctionsWrapper, lag_p: int):
 
     # selecting past observations to initialize forecasting
     # -----------------------------------------------------
@@ -45,9 +45,10 @@ def ar_p_model_forecasting(sql_functions_wrapper, lag_p):
     query_data = (current_time,)
     # if there is just a single param, it has to be like (.,) !!!!
 
-    cnx_object, cursor_object = sql_functions_wrapper.select_query_wrapper(
+    select_query_outputs = sql_functions_wrapper.select_query_wrapper(
         query_text=select_query, query_data=query_data
     )
+    cursor_object = select_query_outputs.cursor
 
     data = cursor_object.fetchall()
     col_names = cursor_object.column_names

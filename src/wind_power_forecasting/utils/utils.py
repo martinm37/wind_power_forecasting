@@ -7,6 +7,9 @@ import datetime
 from src.wind_power_forecasting.data_download.data_download import (
     quarter_hour_down_rounder,
 )
+from wind_power_forecasting.mysql_query_functions.mysql_query_functions import (
+    SQLFunctionsWrapper,
+)
 
 
 class StatisticalModelSolution:
@@ -48,7 +51,7 @@ def adjusted_current_time():
 
 
 class UpToDateDataTester:
-    def __init__(self, sql_functions_wrapper):
+    def __init__(self, sql_functions_wrapper: SQLFunctionsWrapper):
         self.sql_functions_wrapper = sql_functions_wrapper
 
     def test_for_already_present_monitored_capacity(self, selected_timeslot_datetime):
@@ -66,11 +69,10 @@ class UpToDateDataTester:
                         LIMIT 1
                         """
 
-        query_data = tuple()  # an empty tuple of length 0, for compatibility
-
-        cnx_object, cursor_object = self.sql_functions_wrapper.select_query_wrapper(
-            query_text=select_query, query_data=query_data
+        select_query_outputs = self.sql_functions_wrapper.select_query_wrapper(
+            query_text=select_query
         )
+        cursor_object = select_query_outputs.cursor
 
         latest_record = cursor_object.fetchall()
         # latest_record = select_query_for_latest_full_record()
@@ -104,11 +106,10 @@ class UpToDateDataTester:
                         LIMIT 1
                         """
 
-        query_data = tuple()  # an empty tuple of length 0, for compatibility
-
-        cnx_object, cursor_object = self.sql_functions_wrapper.select_query_wrapper(
-            query_text=select_query, query_data=query_data
+        select_query_outputs = self.sql_functions_wrapper.select_query_wrapper(
+            query_text=select_query,
         )
+        cursor_object = select_query_outputs.cursor
 
         latest_record = cursor_object.fetchall()
 
