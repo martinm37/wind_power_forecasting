@@ -15,6 +15,9 @@ from src.wind_power_forecasting.exploratory_statistics.statistical_functions imp
 from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import (
     SQLFunctionsWrapper,
 )
+from wind_power_forecasting.data_structures.database_connectors import (
+    MySQLConnectionData,
+)
 
 # selecting time slice
 # ---------------------
@@ -25,16 +28,17 @@ date_to = datetime.datetime(year=2025, month=3, day=1, hour=0)
 # obtaining data from db
 # --------------------------
 
-connection_dict = {
-    "user": os.environ["STANDARD_USER_1"],
-    "password": os.environ["STANDARD_USER_1_PASSWORD"],
-    "host": "localhost",
-    "port": 3306,
-    "database": "wind_power_db",
-    "datatable": "wind_power_transformed_tbl",
-}
+connection_data = MySQLConnectionData(
+    user=os.environ["STANDARD_USER_1"],
+    password=os.environ["STANDARD_USER_1_PASSWORD"],
+    host="localhost",
+    port=3306,
+    database="wind_power_db",
+    datatable="wind_power_transformed_tbl",
+)
 
-sql_functions_wrapper = SQLFunctionsWrapper(connection_dict=connection_dict)
+
+sql_functions_wrapper = SQLFunctionsWrapper(connection_data)
 
 select_query = """
                 SELECT * 

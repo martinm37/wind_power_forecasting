@@ -10,6 +10,9 @@ from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions impo
     SQLFunctionsWrapper,
 )
 from src.wind_power_forecasting.utils.paths import get_data_file
+from wind_power_forecasting.data_structures.database_connectors import (
+    MySQLConnectionData,
+)
 
 file_name = "transformed_dataset.csv"
 data_df = get_data_file(file_name=file_name)
@@ -28,17 +31,16 @@ data_df = data_df.rename(
     }
 )
 
-# initializing MySQL function wrapper class
-connection_dict = {
-    "user": os.environ["STANDARD_USER_1"],
-    "password": os.environ["STANDARD_USER_1_PASSWORD"],
-    "host": "localhost",
-    "port": 3306,
-    "database": "wind_power_db",
-    "datatable": "wind_power_transformed_tbl",
-}
+connection_data = MySQLConnectionData(
+    user=os.environ["STANDARD_USER_1"],
+    password=os.environ["STANDARD_USER_1_PASSWORD"],
+    host="localhost",
+    port=3306,
+    database="wind_power_db",
+    datatable="wind_power_transformed_tbl",
+)
 
-sql_functions_wrapper = SQLFunctionsWrapper(connection_dict=connection_dict)
+sql_functions_wrapper = SQLFunctionsWrapper(connection_data)
 
 
 # checking which datetimes are already present

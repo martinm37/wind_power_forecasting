@@ -22,6 +22,9 @@ from src.wind_power_forecasting.utils.paths import (
     get_model_files_path,
 )
 from src.wind_power_forecasting.utils.utils import adjusted_current_time
+from wind_power_forecasting.data_structures.database_connectors import (
+    MySQLConnectionData,
+)
 
 
 def ar_p_model_forecasting(sql_functions_wrapper, lag_p):
@@ -76,16 +79,16 @@ def ar_p_model_forecasting(sql_functions_wrapper, lag_p):
 
 
 if __name__ == "__main__":
-    connection_dict = {
-        "user": os.environ["STANDARD_USER_1"],
-        "password": os.environ["STANDARD_USER_1_PASSWORD"],
-        "host": "localhost",
-        "port": 3306,
-        "database": "wind_power_db",
-        "datatable": "wind_power_transformed_tbl",
-    }
+    connection_data = MySQLConnectionData(
+        user=os.environ["STANDARD_USER_1"],
+        password=os.environ["STANDARD_USER_1_PASSWORD"],
+        host="localhost",
+        port=3306,
+        database="wind_power_db",
+        datatable="wind_power_transformed_tbl",
+    )
 
-    sql_functions_wrapper = SQLFunctionsWrapper(connection_dict=connection_dict)
+    sql_functions_wrapper = SQLFunctionsWrapper(connection_data)
 
     # for a single model:
     # -------------------
