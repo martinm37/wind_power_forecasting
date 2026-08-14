@@ -15,10 +15,14 @@ from mysql.connector.pooling import PooledMySQLConnection
 from sqlalchemy import URL, create_engine
 from sqlalchemy.exc import SQLAlchemyError
 
+from wind_power_forecasting.data_structures.database_connectors import (
+    MySQLConnectionData,
+)
+
 
 class SQLFunctionsWrapper:
-    def __init__(self, connection_dict):
-        self.connection_dict = connection_dict
+    def __init__(self, connection_data: MySQLConnectionData):
+        self.connection_data = connection_data
 
     def insert_update_delete_query_wrapper(
         self, query_text: str, query_data: tuple[Any, ...]
@@ -64,11 +68,11 @@ class SQLFunctionsWrapper:
 
         try:
             cnx = mysql.connector.connect(
-                user=self.connection_dict["user"],
-                password=self.connection_dict["password"],
-                host=self.connection_dict["host"],
-                port=self.connection_dict["port"],
-                database=self.connection_dict["database"],
+                user=self.connection_data.user,
+                password=self.connection_data.password,
+                host=self.connection_data.host,
+                port=self.connection_data.port,
+                database=self.connection_data.database,
             )
 
         except mysql.connector.Error as err:
@@ -90,14 +94,14 @@ class SQLFunctionsWrapper:
 
         url_object = URL.create(
             drivername="mysql+mysqlconnector",
-            username=self.connection_dict["user"],
-            password=self.connection_dict["password"],
-            host=self.connection_dict["host"],
-            port=self.connection_dict["port"],
-            database=self.connection_dict["database"],
+            username=self.connection_data.user,
+            password=self.connection_data.password,
+            host=self.connection_data.host,
+            port=self.connection_data.port,
+            database=self.connection_data.database,
         )
 
-        db_table = self.connection_dict["datatable"]
+        db_table = self.connection_data.datatable
 
         engine = create_engine(url_object)
 
@@ -137,11 +141,11 @@ class SQLFunctionsWrapper:
 
         try:
             cnx = mysql.connector.connect(
-                user=self.connection_dict["user"],
-                password=self.connection_dict["password"],
-                host=self.connection_dict["host"],
-                port=self.connection_dict["port"],
-                database=self.connection_dict["database"],
+                user=self.connection_data.user,
+                password=self.connection_data.password,
+                host=self.connection_data.host,
+                port=self.connection_data.port,
+                database=self.connection_data.database,
             )
 
         except mysql.connector.Error as err:

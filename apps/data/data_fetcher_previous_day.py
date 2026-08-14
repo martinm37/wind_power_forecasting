@@ -16,6 +16,9 @@ from src.wind_power_forecasting.data_download.data_download import (
 from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import (
     SQLFunctionsWrapper,
 )
+from wind_power_forecasting.data_structures.database_connectors import (
+    MySQLConnectionData,
+)
 
 
 def data_fetch_previous_day_function(sql_functions_wrapper: SQLFunctionsWrapper):
@@ -155,15 +158,15 @@ def data_fetch_previous_day_function(sql_functions_wrapper: SQLFunctionsWrapper)
 
 
 if __name__ == "__main__":
-    connection_dict = {
-        "user": os.environ["STANDARD_USER_1"],
-        "password": os.environ["STANDARD_USER_1_PASSWORD"],
-        "host": "localhost",
-        "port": 3306,
-        "database": "wind_power_db",
-        "datatable": "wind_power_transformed_tbl",
-    }
+    connection_data = MySQLConnectionData(
+        user=os.environ["STANDARD_USER_1"],
+        password=os.environ["STANDARD_USER_1_PASSWORD"],
+        host="localhost",
+        port=3306,
+        database="wind_power_db",
+        datatable="wind_power_transformed_tbl",
+    )
 
-    sql_functions_wrapper = SQLFunctionsWrapper(connection_dict=connection_dict)
+    sql_functions_wrapper = SQLFunctionsWrapper(connection_data)
 
     data_fetch_previous_day_function(sql_functions_wrapper)

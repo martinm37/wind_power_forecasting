@@ -23,19 +23,21 @@ from src.wind_power_forecasting.utils.utils import (
     UpToDateDataTester,
     adjusted_current_time,
 )
+from wind_power_forecasting.data_structures.database_connectors import (
+    MySQLConnectionData,
+)
 
-# initializing the sql functions wrapper class:
-# --------------------------------------------
-connection_dict = {
-    "user": os.environ["STANDARD_USER_1"],
-    "password": os.environ["STANDARD_USER_1_PASSWORD"],
-    "host": "localhost",
-    "port": 3306,
-    "database": "wind_power_db",
-    "datatable": "wind_power_transformed_tbl",
-}
+connection_data = MySQLConnectionData(
+    user=os.environ["STANDARD_USER_1"],
+    password=os.environ["STANDARD_USER_1_PASSWORD"],
+    host="localhost",
+    port=3306,
+    database="wind_power_db",
+    datatable="wind_power_transformed_tbl",
+)
 
-sql_functions_wrapper = SQLFunctionsWrapper(connection_dict=connection_dict)
+
+sql_functions_wrapper = SQLFunctionsWrapper(connection_data)
 
 # fetching newest data
 # ----------------------

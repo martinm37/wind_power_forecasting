@@ -24,6 +24,9 @@ from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions impo
 )
 from src.wind_power_forecasting.statistical_models.ar_model import AutoRegressiveModel
 from src.wind_power_forecasting.utils.paths import get_model_files_path
+from wind_power_forecasting.data_structures.database_connectors import (
+    MySQLConnectionData,
+)
 
 # TODO:
 # create the assessment of model prediction capability
@@ -38,16 +41,17 @@ from src.wind_power_forecasting.utils.paths import get_model_files_path
 # data loading
 # -------------------
 
-connection_dict = {
-    "user": os.environ["STANDARD_USER_1"],
-    "password": os.environ["STANDARD_USER_1_PASSWORD"],
-    "host": "localhost",
-    "port": 3306,
-    "database": "wind_power_db",
-    "datatable": "wind_power_transformed_tbl",
-}
+connection_data = MySQLConnectionData(
+    user=os.environ["STANDARD_USER_1"],
+    password=os.environ["STANDARD_USER_1_PASSWORD"],
+    host="localhost",
+    port=3306,
+    database="wind_power_db",
+    datatable="wind_power_transformed_tbl",
+)
 
-sql_functions_wrapper = SQLFunctionsWrapper(connection_dict=connection_dict)
+
+sql_functions_wrapper = SQLFunctionsWrapper(connection_data)
 
 date_start = datetime.datetime(2014, 12, 31, 23, 00)
 date_end = datetime.datetime(2025, 4, 28, 8, 00)
