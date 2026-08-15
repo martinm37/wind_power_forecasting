@@ -23,6 +23,7 @@ dependencies = [
     "pandas==2.2.3",
     "patsy==1.0.1",
     "pillow==11.1.0",
+    "pre-commit>=4.6.2",
     "pydantic>=2.11.10",
     "pyparsing==3.2.1",
     "pyqt5==5.15.11",
