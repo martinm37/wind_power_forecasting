@@ -80,13 +80,12 @@ class UpToDateDataTester:
         latest_record_monitored_capacity = latest_record[0][2]
         # latest_record_rescaled_power = latest_record[0][3]
 
-        if (selected_timeslot_datetime == latest_record_datetime) and (
+        is_current: bool = selected_timeslot_datetime == latest_record_datetime
+        monitored_capacity_is_not_None: bool = (
             latest_record_monitored_capacity is not None
-        ):
-            return True
+        )
 
-        else:
-            return False
+        return is_current and monitored_capacity_is_not_None
 
     def test_for_already_present_full_record(self, selected_timeslot_datetime):
         """
@@ -118,12 +117,11 @@ class UpToDateDataTester:
         latest_record_monitored_capacity = latest_record[0][2]
         latest_record_rescaled_power = latest_record[0][3]
 
-        if (
-            (selected_timeslot_datetime == latest_record_datetime)
-            and (latest_record_power is not None)
+        is_current: bool = selected_timeslot_datetime == latest_record_datetime
+        all_data_is_not_none: bool = (
+            (latest_record_power is not None)
             and (latest_record_monitored_capacity is not None)
             and (latest_record_rescaled_power is not None)
-        ):
-            return True
-        else:
-            return False
+        )
+
+        return is_current and all_data_is_not_none
