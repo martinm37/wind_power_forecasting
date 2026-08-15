@@ -76,9 +76,9 @@ class UpToDateDataTester:
         # latest_record = select_query_for_latest_full_record()
 
         latest_record_datetime = latest_record[0][0]
-        latest_record_power = latest_record[0][1]
+        # latest_record_power = latest_record[0][1]
         latest_record_monitored_capacity = latest_record[0][2]
-        latest_record_rescaled_power = latest_record[0][3]
+        # latest_record_rescaled_power = latest_record[0][3]
 
         if (selected_timeslot_datetime == latest_record_datetime) and (
             latest_record_monitored_capacity is not None

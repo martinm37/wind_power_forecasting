@@ -69,7 +69,7 @@ def pacf_comp(y_vec, total_lag_p):
     computes the partial autocorrelation function
     """
 
-    time_length = len(y_vec)
+    # time_length = len(y_vec)
 
     # y_mean = np.sum(y_vec) / time_length
     # y_vec_demeaned = y_vec - y_mean
