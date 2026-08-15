@@ -52,7 +52,7 @@ def pacf_ar_p_fit(y_vec, lag_p):
 
     X_mat = np.zeros((time_length - lag_p, lag_p))
 
-    for i in range(0, lag_p):
+    for i in range(lag_p):
         i_indx = i + 1  # easier for indexing
         # print(f"{i_indx},{time_length - lag_p + i_indx}")
         selection = y_vec[i_indx : time_length - lag_p + i_indx, 0]
@@ -126,7 +126,7 @@ def adf_comp(y_vec, lag_p):
     Y_mat = y_vec_diff[0 : time_length - lag_p]
 
     X_mat = np.zeros((time_length - lag_p, lag_p))
-    for i in range(0, lag_p):
+    for i in range(lag_p):
         i_indx = i + 1  # easier for indexing
         # print(f"{i_indx},{time_length - lag_p + i_indx}")
         selection = y_vec_diff[i_indx : time_length - lag_p + i_indx, 0]

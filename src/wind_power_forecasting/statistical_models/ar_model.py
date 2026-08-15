@@ -32,7 +32,7 @@ class AutoRegressiveModel:
         data_vec_cut = data_vector[0 : time_length - self.lag_order_p]
         X_mat = np.zeros((time_length - self.lag_order_p, self.lag_order_p))
 
-        for i in range(0, self.lag_order_p):
+        for i in range(self.lag_order_p):
             i_indx = i + 1  # easier for indexing
             # print(f"{i_indx},{time_length - lag_p + i_indx}")
             selection = data_vector[i_indx : time_length - self.lag_order_p + i_indx, 0]
