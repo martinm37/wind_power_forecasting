@@ -1,6 +1,5 @@
 # script for testing the insertion of specific rows into the MySQL Databse
 
-import datetime
 import os
 
 import mysql.connector

@@ -19,7 +19,6 @@ from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions impo
     SQLFunctionsWrapper,
 )
 from src.wind_power_forecasting.utils.paths import (
-    get_figures_path,
     get_model_files_path,
 )
 from wind_power_forecasting.data_structures.database_connectors import (

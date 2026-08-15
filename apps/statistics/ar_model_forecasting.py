@@ -2,7 +2,6 @@
 forecasting with the AR(p) model
 """
 
-import datetime
 import os
 import pickle
 
@@ -11,7 +10,6 @@ import numpy as np
 import pandas as pd
 
 from src.wind_power_forecasting.data_visualization.plotting_functions import (
-    forecast_plot,
     forecast_plot_three_models,
 )
 from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import (

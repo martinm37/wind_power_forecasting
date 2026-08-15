@@ -11,8 +11,6 @@ import pandas as pd
 
 from src.wind_power_forecasting.data_visualization.plotting_functions import (
     acf_plot,
-    error_plot,
-    original_fitted_comparison_plot,
     pacf_plot,
 )
 from src.wind_power_forecasting.exploratory_statistics.statistical_functions import (

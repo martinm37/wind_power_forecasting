@@ -12,7 +12,6 @@ import numpy as np
 from apps.data.data_fetcher import data_fetch_function
 from apps.statistics.ar_model_forecasting import ar_p_model_forecasting
 from src.wind_power_forecasting.data_visualization.plotting_functions import (
-    forecast_plot,
     forecast_plot_three_models,
 )
 from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import (

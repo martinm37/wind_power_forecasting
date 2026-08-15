@@ -6,19 +6,14 @@ import datetime
 import os
 
 import matplotlib.pyplot as plt
-import mysql.connector
 import pandas as pd
-from mysql.connector import errorcode
 
 from src.wind_power_forecasting.data_visualization.data_visualization import (
     wind_series_plotter,
-    wind_series_plotter_rescaled,
-    wind_series_plotter_with_capacity,
 )
 from src.wind_power_forecasting.mysql_query_functions.mysql_query_functions import (
     SQLFunctionsWrapper,
 )
-from src.wind_power_forecasting.utils.paths import get_data_file
 from wind_power_forecasting.data_structures.database_connectors import (
     MySQLConnectionData,
 )
