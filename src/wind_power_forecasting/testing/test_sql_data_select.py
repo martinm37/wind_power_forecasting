@@ -1,11 +1,13 @@
 # script for selecting data from MySQL DB according to a specific time frame
 
-import datetime
 import os
+from datetime import datetime, timedelta, timezone
 
 import mysql.connector
 import pandas as pd
 from mysql.connector import errorcode
+
+UTC_TIMEZONE = timezone(offset=timedelta(hours=0))
 
 connection_dict = {
     "user": os.environ["TEST_USER_NAME_2"],
@@ -50,8 +52,8 @@ else:
     # commenting out /*WHERE datetime >= %s AND datetime < %s*/ is okay, but if I leave the same line before
     # or after it, it throws an error
 
-    time_start = datetime.datetime(2025, 3, 14, 22, 0, 0)
-    time_end = datetime.datetime(2025, 3, 16, 22, 0, 0)
+    time_start = datetime(2025, 3, 14, 22, 0, 0, tzinfo=UTC_TIMEZONE)
+    time_end = datetime(2025, 3, 16, 22, 0, 0, tzinfo=UTC_TIMEZONE)
 
     cursor.execute(query, (time_start, time_end))
 

@@ -1,10 +1,11 @@
-import datetime
+from datetime import datetime, timedelta, timezone
 
 import numpy as np
 import pandas as pd
 
 from src.wind_power_forecasting.utils.paths import get_data_file
 
+UTC_TIMEZONE = timezone(offset=timedelta(hours=0))
 
 def acf_comp(y_vec, total_lag_k):
     """
@@ -186,8 +187,8 @@ if __name__ == "__main__":
     ].interpolate(method="linear")
 
     # selecting time slice
-    date_from = datetime.datetime(year=2015, month=1, day=1, hour=0)
-    date_to = datetime.datetime(year=2025, month=3, day=1, hour=0)
+    date_from = datetime(year=2015, month=1, day=1, hour=0, tzinfo=UTC_TIMEZONE)
+    date_to = datetime(year=2025, month=3, day=1, hour=0, tzinfo=UTC_TIMEZONE)
 
     data_select = data_selection[
         (data_selection["Datetime"] >= date_from)

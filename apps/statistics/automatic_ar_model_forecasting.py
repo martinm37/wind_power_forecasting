@@ -3,8 +3,8 @@ this script runs data_fetch_function(), if the exit state of this function state
 inserted for the current time window, it runs the ar_p_model_forecasting() function on this newest data
 """
 
-import datetime
 import os
+from datetime import datetime, timedelta, timezone
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,6 +26,8 @@ from wind_power_forecasting.data_structures.database_connectors import (
     MySQLConnectionData,
 )
 
+CEST_TIMEZONE = timezone(offset=timedelta(hours=2))
+
 connection_data = MySQLConnectionData(
     user=os.environ["STANDARD_USER_1"],
     password=os.environ["STANDARD_USER_1_PASSWORD"],
@@ -45,7 +47,7 @@ up_to_date_data_tester = UpToDateDataTester(sql_functions_wrapper)
 fetching_exit_status = data_fetch_function(
     sql_functions_wrapper, up_to_date_data_tester
 )
-print(datetime.datetime.now(), fetching_exit_status)
+print(datetime.now(tz=CEST_TIMEZONE), fetching_exit_status)
 
 # forecasting
 # ----------------------
@@ -90,7 +92,7 @@ if fetching_exit_status == "inserted_full_data":
         )
     )
 
-    print(datetime.datetime.now(), f"forecast_computed")
+    print(datetime.now(tz=CEST_TIMEZONE), "forecast_computed")
 
 else:
     pass

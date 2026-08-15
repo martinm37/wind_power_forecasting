@@ -1,5 +1,5 @@
-import datetime
 import os
+from datetime import datetime, timedelta, timezone
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -19,10 +19,12 @@ from wind_power_forecasting.data_structures.database_connectors import (
     MySQLConnectionData,
 )
 
+UTC_TIMEZONE = timezone(offset=timedelta(hours=0))
+
 # selecting time slice
 # ---------------------
-date_from = datetime.datetime(year=2015, month=1, day=1, hour=0)
-date_to = datetime.datetime(year=2025, month=3, day=1, hour=0)
+date_from = datetime(year=2015, month=1, day=1, hour=0, tzinfo=UTC_TIMEZONE)
+date_to = datetime(year=2025, month=3, day=1, hour=0, tzinfo=UTC_TIMEZONE)
 
 
 # obtaining data from db

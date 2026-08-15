@@ -3,8 +3,8 @@ python script for fetching up last 100 available data points from Elia -> cca. t
 -> but it seems that data in this dataset is always available only from 22.00 of the previous day, not earlier
 """
 
-import datetime
 import os
+from datetime import datetime, timedelta, timezone
 
 import numpy as np
 import pandas as pd
@@ -20,22 +20,20 @@ from wind_power_forecasting.data_structures.database_connectors import (
     MySQLConnectionData,
 )
 
+UTC_TIMEZONE = timezone(offset=timedelta(hours=0))
+CEST_TIMEZONE = timezone(offset=timedelta(hours=2))
 
 def data_fetch_previous_day_function(sql_functions_wrapper: SQLFunctionsWrapper):
 
-    current_time = datetime.datetime.now()
-
-    # winter time
-    # current_time_UTC = current_time - datetime.timedelta(hours=1)
-
-    # summer time
-    current_time_UTC = current_time - datetime.timedelta(hours=2)
+    # TODO: make logic that automatically switches between summer and winter
+    current_time = datetime.now(tz=CEST_TIMEZONE)
+    current_time_UTC = current_time.astimezone(UTC_TIMEZONE)
 
     """
     here I delay by 30 minutes, 15 mins extra when compared to data_fetcher.py
     """
 
-    current_time_UTC_dalayed = current_time_UTC - datetime.timedelta(minutes=30)
+    current_time_UTC_dalayed = current_time_UTC - timedelta(minutes=30)
     current_time_UTC_dalayed_rounded = quarter_hour_down_rounder(
         current_time_UTC_dalayed
     )

@@ -2,7 +2,7 @@
 miscellaneous util functions and classes
 """
 
-import datetime
+from datetime import datetime, timedelta, timezone
 
 from src.wind_power_forecasting.data_download.data_download import (
     quarter_hour_down_rounder,
@@ -11,6 +11,8 @@ from wind_power_forecasting.mysql_query_functions.mysql_query_functions import (
     SQLFunctionsWrapper,
 )
 
+UTC_TIMEZONE = timezone(offset=timedelta(hours=0))
+CEST_TIMEZONE = timezone(offset=timedelta(hours=2))
 
 class StatisticalModelSolution:
     def __init__(self, beta_vector, Y_mat, Y_mat_fitted, errors_vector):
@@ -27,15 +29,11 @@ def adjusted_current_time():
     is in UTC timezone, but without the append
     """
 
-    current_time = datetime.datetime.now()
+    # TODO: make logic that automatically switches between summer and winter
+    current_time = datetime.now(tz=CEST_TIMEZONE)
+    current_time_UTC = current_time.astimezone(UTC_TIMEZONE)
 
-    # winter time
-    # current_time_UTC = current_time - datetime.timedelta(hours=1)
-
-    # summer time
-    current_time_UTC = current_time - datetime.timedelta(hours=2)
-
-    current_time_UTC_dalayed = current_time_UTC - datetime.timedelta(
+    current_time_UTC_dalayed = current_time_UTC - timedelta(
         minutes=15
     )  # time delay is cca 15 minutes
     current_time_UTC_dalayed_rounded = quarter_hour_down_rounder(

@@ -2,10 +2,10 @@
 training of arima type models through statsmodels package
 """
 
-import datetime
 import os
 import pickle
 import time
+from datetime import datetime, timedelta, timezone
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -25,6 +25,8 @@ from wind_power_forecasting.data_structures.database_connectors import (
     MySQLConnectionData,
 )
 
+UTC_TIMEZONE = timezone(offset=timedelta(hours=0))
+
 time_start = time.time()
 
 # data loading
@@ -42,8 +44,8 @@ connection_data = MySQLConnectionData(
 
 sql_functions_wrapper = SQLFunctionsWrapper(connection_data)
 
-date_start = datetime.datetime(2014, 12, 31, 23, 00)
-date_end = datetime.datetime(2025, 4, 28, 8, 00)
+date_start = datetime(2014, 12, 31, 23, 00, tzinfo=UTC_TIMEZONE)
+date_end = datetime(2025, 4, 28, 8, 00, tzinfo=UTC_TIMEZONE)
 
 select_query = """
                 SELECT *

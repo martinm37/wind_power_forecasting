@@ -2,8 +2,8 @@
 script for various types of plots for the selected time window
 """
 
-import datetime
 import os
+from datetime import datetime, timedelta, timezone
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -18,10 +18,12 @@ from wind_power_forecasting.data_structures.database_connectors import (
     MySQLConnectionData,
 )
 
+UTC_TIMEZONE = timezone(offset=timedelta(hours=0))
+
 # selecting plotting window
 # --------------------------
-date_from = datetime.datetime(year=2025, month=2, day=15, hour=0)
-date_to = datetime.datetime(year=2025, month=2, day=28, hour=0)
+date_from = datetime(year=2025, month=2, day=15, hour=0, tzinfo=UTC_TIMEZONE)
+date_to = datetime(year=2025, month=2, day=28, hour=0, tzinfo=UTC_TIMEZONE)
 
 # obtaining data from db
 # --------------------------

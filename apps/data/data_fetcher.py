@@ -3,8 +3,8 @@ python script for fetching data from Elia
 - able to be run continuously when run by a cron job through a bash script
 """
 
-import datetime
 import os
+from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 import requests
@@ -20,8 +20,8 @@ from wind_power_forecasting.data_structures.database_connectors import (
     MySQLConnectionData,
 )
 
-# TODO: implement a logger feature
-# TODO: somehow account for annual summer time changes automatically
+UTC_TIMEZONE = timezone(offset=timedelta(hours=0))
+CEST_TIMEZONE = timezone(offset=timedelta(hours=2))
 
 
 def data_fetch_function(
@@ -31,15 +31,11 @@ def data_fetch_function(
 
     exit_status = ""  # will contain which branch got executed
 
-    current_time = datetime.datetime.now()
+    # TODO: make logic that automatically switches between summer and winter
+    current_time = datetime.now(tz=CEST_TIMEZONE)
+    current_time_UTC = current_time.astimezone(UTC_TIMEZONE)
 
-    # winter time
-    # current_time_UTC = current_time - datetime.timedelta(hours=1)
-
-    # summer time
-    current_time_UTC = current_time - datetime.timedelta(hours=2)
-
-    current_time_UTC_dalayed = current_time_UTC - datetime.timedelta(
+    current_time_UTC_dalayed = current_time_UTC - timedelta(
         minutes=15
     )  # time delay is cca 15 minutes
     current_time_UTC_dalayed_rounded = quarter_hour_down_rounder(
@@ -278,4 +274,4 @@ if __name__ == "__main__":
     up_to_date_data_tester = UpToDateDataTester(sql_functions_wrapper)
 
     exit_state = data_fetch_function(sql_functions_wrapper, up_to_date_data_tester)
-    print(datetime.datetime.now(), exit_state)
+    print(datetime.now(tz=CEST_TIMEZONE), exit_state)
